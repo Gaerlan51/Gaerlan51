@@ -13,21 +13,32 @@ owner-level cross-branch rollup dashboard.
 | [`02-ops-assistant-system-prompt.md`](02-ops-assistant-system-prompt.md) | Part 2 — system prompt for the clinic's day-to-day AI ops assistant | Claude (Project custom instructions), or the assistant slot inside the app once it exists |
 | [`03-feasibility-notes.md`](03-feasibility-notes.md) | Reality checks on the four places where "automatic" isn't buildable yet | Read before building — it changes what you ask for |
 | [`04-open-questions.md`](04-open-questions.md) | The decisions that must be answered before Phase 1 starts | Answer these first; they're blocking |
+| [`05-claude-build-spec.md`](05-claude-build-spec.md) | **The build spec.** Part 1 with every platform decision resolved — schema, RLS policies, follow-up rule, prescription safety, acceptance tests | Claude Code, as the whole task |
 
 ## How to use this pack
 
-1. **Read [`03-feasibility-notes.md`](03-feasibility-notes.md) first.** It flags where
-   "real-time" and "automatic" aren't realistic for an individual clinic in the
-   Philippines today, and says what to build instead. Skipping it means asking a
-   builder for something it will either fake or fail at.
-2. **Answer [`04-open-questions.md`](04-open-questions.md).** Platform choice,
-   patient-portal scope, and branding are all decisions the brief deliberately
-   refuses to assume.
-3. **Paste Part 1** into your app builder. Each part is in a single fenced block so
-   it copies cleanly.
-4. **Paste Part 2** into Claude as a Project system prompt. Part 2 is useful
-   *immediately*, before any software exists — it works as a stopgap for front-desk
-   drafting and scheduling logic while Phase 1 is still being built.
+**To build the software**, hand [`05-claude-build-spec.md`](05-claude-build-spec.md) to
+Claude Code:
+
+```
+Read pt-rehab-clinic/05-claude-build-spec.md and build Phase 1.
+Work module by module. Stop and show me the end-to-end flow before Phase 2.
+```
+
+That spec resolves the three questions the original brief left open — full-code on
+Next.js + Postgres with row-level security, patient portal deferred, no public booking
+page in Phase 1 — and specifies the schema, RLS policies, follow-up rule, and
+acceptance tests concretely. Files 01 and 04 remain as the record of the original ask
+and of why each decision went the way it did.
+
+**To run the clinic day to day**, paste
+[`02-ops-assistant-system-prompt.md`](02-ops-assistant-system-prompt.md) into a Claude
+Project. It's useful *immediately*, before any software exists — a stopgap for
+front-desk drafting and scheduling logic while Phase 1 is being built.
+
+**Before either**, read [`03-feasibility-notes.md`](03-feasibility-notes.md). It flags
+where "real-time" and "automatic" aren't realistic for an individual clinic in the
+Philippines today, and says what to build instead.
 
 ## Build order (non-negotiable)
 

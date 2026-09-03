@@ -3,6 +3,12 @@
 Part 1 ends by instructing the builder to ask these rather than assume. Answering them
 up front saves a round trip; each one changes what gets built.
 
+> **Questions 1–3 are now decided** and baked into
+> [`05-claude-build-spec.md`](05-claude-build-spec.md) — full-code on Next.js +
+> Postgres with row-level security, patient portal deferred, no public booking page in
+> Phase 1. This file stays as the record of *why* each went that way, and §4 below
+> lists what the owner still has to supply.
+
 ## 1. Which platform? (blocking)
 
 Everything downstream depends on this — whether audit logs, branch-scoped permissions,
