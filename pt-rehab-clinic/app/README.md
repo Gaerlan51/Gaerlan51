@@ -1,0 +1,112 @@
+# Clinic Management — Phase 1
+
+Staff-facing clinic management for a five-branch physical medicine and rehabilitation
+practice. Built to [`../05-claude-build-spec.md`](../05-claude-build-spec.md); section
+references below (§4, §9, §17…) point into that spec.
+
+Phase 1 only: patient records, scheduling, reminders, referral and prescription
+documents, and the Owner Dashboard. Billing and claims are Phase 2; the lead tracker
+and education library are Phase 3. There is no patient portal and no public booking
+page — Phase 1 is staff-only by decision, not by omission.
+
+## Running it
+
+```bash
+npm install
+cp .env.example .env.local     # fill in Supabase + provider keys
+
+npm run dev                    # needs a Supabase project
+npm run verify                 # guard + typecheck + all 69 tests
+```
+
+The tests need a local Postgres 16, not a Supabase project:
+
+```bash
+initdb -D .pgdata && pg_ctl -D .pgdata -o "-p 5433" start
+TEST_DATABASE_URL=postgres://postgres@localhost:5433/clinic_test \
+  node scripts/db-reset.mjs --seed
+TEST_DATABASE_URL=postgres://postgres@localhost:5433/clinic_test npm test
+```
+
+`supabase/local/auth_stub.sql` stands in for the hosted `auth` schema so the same
+migrations run in both places. It is not a migration and never ships.
+
+## How the non-negotiables are enforced
+
+Each of these is enforced in the database, and each has a test that proves it. The
+recurring principle: **if the UI is the only thing stopping it, it isn't stopped.**
+
+| Requirement | Mechanism | Test |
+| --- | --- | --- |
+| Branch isolation (§2.1) | RLS on every table; `SELECT` allows own branch or owner, writes are own-branch only | `tests/db/rls.test.ts` §13.1–3 |
+| Owner is read-only cross-branch (§3) | No owner exception in any write policy | §13.3 |
+| Front desk cannot read SOAP bodies (§3) | Clinical text lives in `encounter_notes` / `program_body`, denied to `admin` | §13.4 |
+| No double-booking (§4) | GiST exclusion constraints on provider and room time ranges | §13.7 |
+| Only the doctor signs (§9) | RLS `WITH CHECK` **and** a trigger; documents are born as drafts | §13.5 |
+| A signature cannot outlive its text (§9) | Signing hashes the body; editing a signed body reverts it to draft | §13.5 |
+| Finalized notes are locked (§7) | Trigger refuses SOAP edits and reopening; addenda instead | `rls.test.ts` |
+| Audit log is append-only (§2.2) | No `UPDATE`/`DELETE` policy, and the privilege is revoked | §13.6 |
+| The follow-up rule is defined once (§8) | `v_followup_due`; four consumers, one definition | `tests/db/followup.test.ts` |
+| Service-role key stays out of request paths (§5) | `npm run guard:service-role`, wired into `npm run verify` | run it against a deliberate violation |
+
+### Three decisions worth knowing
+
+**Clinical text is split into companion tables.** `encounters` holds metadata,
+`encounter_notes` holds SOAP; `programs` holds the title, `program_body` the exercises.
+"Front desk sees that a consult happened, not what it said" is then a schema fact
+rather than a view that must be remembered.
+
+**Reads are audited in the data layer, writes by trigger.** Postgres has no `SELECT`
+trigger, so chart reads go through `getPatientChart()` in `src/server/audit.ts`, which
+logs before returning. Querying `patients` directly from a page would silently skip
+that — hence the single accessor.
+
+**An RLS denial on `UPDATE` is a no-op, not an error.** Zero rows match the policy and
+Postgres reports success. `assertAffected()` in `src/domain/conflicts.ts` turns
+"nothing changed" into a refusal, so the UI can never report a save that did not happen.
+
+## Layout
+
+```
+src/domain/     Pure business logic — no Supabase, no React. Directly unit-tested.
+src/server/     Server Actions and queries. Every write goes through here.
+src/server/jobs/  The only request-free code allowed the service-role key.
+src/app/        Routes: dashboard, schedule, patients, followups, reminders, audit.
+src/pdf/        @react-pdf/renderer documents, including the draft watermark.
+supabase/migrations/  The schema. Committed SQL; no dashboard edits.
+```
+
+## What is verified, and what is not
+
+Verified by `npm run verify` against a real Postgres with RLS active:
+
+- 69 tests pass — 22 RLS, 12 follow-up rule, 9 end-to-end walkthrough, 26 domain.
+- `tests/db/walkthrough.test.ts` walks §17's nine points as one patient: registration →
+  SOAP note → programme PDF → 6 booked sessions → automatic follow-up flag → queued
+  reminder → dashboard rollup → audit trail → cross-branch denial.
+- `npm run build` compiles all 15 routes; `tsc --noEmit` is clean.
+
+**Not verified here:** the browser. No Supabase project was available while building, so
+the HTTP layer, Supabase Auth sign-in, and the rendered pages have been compiled and
+typechecked but not clicked through. The database contract underneath them is proven;
+the UI on top of it is not. First task on a real Supabase project: run the §17
+walkthrough by hand in the browser.
+
+**Also outstanding**, from §15 — the owner supplies these, and the app flags rather than
+invents them: programme templates (the library ships empty), real branch names and
+letterhead, the doctor's PRC licence number, therapist roster and room inventory, and
+the Semaphore sender ID.
+
+## Deploying
+
+1. Create the Supabase project (Singapore, `ap-southeast-1`).
+2. Apply `supabase/migrations/*.sql` in order, then `supabase/seed.sql`.
+3. Create Auth users for staff, then set `staff.auth_user_id` to match. Nobody can sign
+   in until this is done.
+4. Set the environment variables from `.env.example`.
+5. Schedule `POST /api/cron/reminders` hourly with the `CRON_SECRET` bearer token.
+
+RA 10173 note: this app supports compliance but does not constitute it. NPC
+registration, a Data Protection Officer, patient consent forms and breach-notification
+procedures are the clinic's to put in place, and hosting in Singapore is a cross-border
+transfer the clinic remains accountable for.
