@@ -1,52 +1,33 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { currentStaff } from '@/server/session';
+import { site } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'Clinic Management — PT Rehab Network',
-  description: 'Staff-facing clinic management for a five-branch rehabilitation practice.',
+  title: { default: `${site.name} — ${site.tagline}`, template: `%s · ${site.name}` },
+  description: site.description,
+  openGraph: { title: site.name, description: site.description, type: 'website' },
+  robots: { index: true, follow: true },
 };
 
-const NAV = [
-  { href: '/dashboard', label: 'Dashboard', roles: ['owner', 'admin', 'therapist'] },
-  { href: '/schedule', label: 'Schedule', roles: ['owner', 'admin', 'therapist'] },
-  { href: '/patients', label: 'Patients', roles: ['owner', 'admin', 'therapist'] },
-  { href: '/followups', label: 'Follow-ups due', roles: ['owner', 'admin', 'therapist'] },
-  { href: '/reminders', label: 'Reminders', roles: ['owner', 'admin'] },
-  { href: '/audit', label: 'Audit log', roles: ['owner', 'admin'] },
-];
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f8fafc' },
+    { media: '(prefers-color-scheme: dark)', color: '#080f1a' },
+  ],
+};
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const staff = await currentStaff();
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <div className="min-h-screen">
-          <header className="border-b border-slate-200 bg-white">
-            <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-              <Link href="/dashboard" className="text-sm font-semibold text-brand">
-                PT Rehab Network
-              </Link>
-              {staff && (
-                <nav className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                  {NAV.filter((i) => i.roles.includes(staff.role)).map((item) => (
-                    <Link key={item.href} href={item.href} className="text-slate-600 hover:text-brand">
-                      {item.label}
-                    </Link>
-                  ))}
-                </nav>
-              )}
-              {staff && (
-                <p className="ml-auto text-xs text-slate-500">
-                  {staff.full_name} · <span className="capitalize">{staff.role}</span>
-                </p>
-              )}
-            </div>
-          </header>
-          <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
-        </div>
+    <html lang="en-PH">
+      <body className="min-h-screen">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50
+                     focus:rounded-lg focus:bg-brand focus:px-4 focus:py-2 focus:text-brand-ink"
+        >
+          Skip to content
+        </a>
+        {children}
       </body>
     </html>
   );

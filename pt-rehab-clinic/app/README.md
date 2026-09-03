@@ -7,7 +7,12 @@ references below (§4, §9, §17…) point into that spec.
 Phase 1 only: patient records, scheduling, reminders, referral and prescription
 documents, and the Owner Dashboard. Billing and claims are Phase 2; the lead tracker
 and education library are Phase 3. There is no patient portal and no public booking
-page — Phase 1 is staff-only by decision, not by omission.
+page — the clinical app is staff-only by decision, not by omission.
+
+**Added beyond the spec:** a public corporate site (`/`, `/services`, `/branches`,
+`/about`, `/contact`). The spec excluded a public *booking* page, not a public site;
+these pages are static, read nothing from the database, and are the one part of the
+app a patient can reach.
 
 ## Running it
 
@@ -71,10 +76,29 @@ Postgres reports success. `assertAffected()` in `src/domain/conflicts.ts` turns
 src/domain/     Pure business logic — no Supabase, no React. Directly unit-tested.
 src/server/     Server Actions and queries. Every write goes through here.
 src/server/jobs/  The only request-free code allowed the service-role key.
-src/app/        Routes: dashboard, schedule, patients, followups, reminders, audit.
+src/app/(marketing)/  Public corporate site. Static; touches no patient data.
+src/app/(app)/  Authenticated clinic app behind a staff session.
+src/app/login/  Sign-in, outside both groups so it renders full-bleed.
 src/pdf/        @react-pdf/renderer documents, including the draft watermark.
 supabase/migrations/  The schema. Committed SQL; no dashboard edits.
 ```
+
+## Design system
+
+One token set in `globals.css`, exposed to Tailwind as `bg-surface`, `text-muted`,
+`border-line` and so on. Light is the default because the front desk works under bright
+clinic lighting; dark follows the operating system, so a therapist checking a chart on
+a phone at night is not flashbanged between patients. Because both themes come from the
+same tokens, no component carries a second palette.
+
+- **Type and colour** — a system font stack (swap in a webfont via `next/font` by
+  changing `--font-sans`); teal brand, amber for drafts, rose for refusals.
+- **Icons** — hand-rolled inline SVG in `src/components/icons.tsx`. `currentColor`
+  throughout, so they theme for free and add no dependency.
+- **Accessibility** — one `h1` per page, a skip link, `:focus-visible` rings, ARIA
+  on every disclosure, `aria-live` on the sign-in error, and
+  `prefers-reduced-motion` honoured. Verified in a real browser, not assumed.
+- **Print** — `.no-print` strips chrome so a chart or letter prints clean.
 
 ## What is verified, and what is not
 
@@ -84,13 +108,16 @@ Verified by `npm run verify` against a real Postgres with RLS active:
 - `tests/db/walkthrough.test.ts` walks §17's nine points as one patient: registration →
   SOAP note → programme PDF → 6 booked sessions → automatic follow-up flag → queued
   reminder → dashboard rollup → audit trail → cross-branch denial.
-- `npm run build` compiles all 15 routes; `tsc --noEmit` is clean.
+- `npm run build` compiles all 19 routes; `tsc --noEmit` is clean.
+- The public pages were rendered in headless Chromium at 1440px and 390px, light and
+  dark: every page has exactly one `h1`, none scrolls sideways on mobile, and
+  `/dashboard` returns a 307 to `/login` for an anonymous request.
 
-**Not verified here:** the browser. No Supabase project was available while building, so
-the HTTP layer, Supabase Auth sign-in, and the rendered pages have been compiled and
-typechecked but not clicked through. The database contract underneath them is proven;
-the UI on top of it is not. First task on a real Supabase project: run the §17
-walkthrough by hand in the browser.
+**Not verified here:** anything requiring a real Supabase project. The public site,
+sign-in page and route protection were checked in a real browser, but Supabase Auth
+sign-in and every authenticated screen behind it have been compiled and typechecked
+without ever being clicked through — there were no credentials to sign in with. First
+task on a real project: run the §17 walkthrough by hand in the browser.
 
 **Also outstanding**, from §15 — the owner supplies these, and the app flags rather than
 invents them: programme templates (the library ships empty), real branch names and

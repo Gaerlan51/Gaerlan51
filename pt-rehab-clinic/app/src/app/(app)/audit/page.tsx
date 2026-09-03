@@ -1,6 +1,6 @@
 import { requireRole } from '@/server/session';
 import { listAuditEntries } from '@/server/export';
-import { Card, Badge, Empty } from '@/components/ui';
+import { Card, Badge, Empty, PageHeader, TableWrap } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,13 +14,10 @@ export default async function AuditPage({
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold">Audit log</h1>
-        <p className="text-sm text-slate-500">
-          Who viewed, changed, printed, exported or sent each record. Append-only: no account
-          can edit or delete an entry.
-        </p>
-      </div>
+      <PageHeader
+        title="Audit log"
+        lead="Who viewed, changed, printed, exported or sent each record. Append-only — no account can edit or delete an entry, including the owner's."
+      />
 
       <form className="flex flex-wrap gap-2">
         <input className="input max-w-xs" name="patient" placeholder="Patient ID" defaultValue={sp.patient} />
@@ -45,14 +42,14 @@ export default async function AuditPage({
                   return (
                     <tr key={e.id}>
                       <td className="td whitespace-nowrap">{new Date(e.occurred_at).toLocaleString('en-PH')}</td>
-                      <td className="td">{actor?.full_name ?? '—'}<span className="ml-1 text-xs text-slate-500">{e.actor_role}</span></td>
+                      <td className="td">{actor?.full_name ?? '—'}<span className="ml-1 text-xs text-muted">{e.actor_role}</span></td>
                       <td className="td">
                         <Badge tone={e.action === 'sign' ? 'ok' : e.action === 'view' ? 'neutral' : 'draft'}>
                           {e.action}
                         </Badge>
                       </td>
                       <td className="td">{e.entity_type}</td>
-                      <td className="td text-slate-600">{e.summary ?? '—'}</td>
+                      <td className="td text-muted">{e.summary ?? '—'}</td>
                     </tr>
                   );
                 })}

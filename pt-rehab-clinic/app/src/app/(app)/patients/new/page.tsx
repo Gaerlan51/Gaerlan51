@@ -1,13 +1,16 @@
 import { requireRole } from '@/server/session';
 import { createPatientAction } from '@/server/actions';
-import { Card, Field } from '@/components/ui';
+import { Card, Field, PageHeader, Note } from '@/components/ui';
 
 export default async function NewPatientPage() {
   await requireRole('owner', 'admin');
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
-      <h1 className="text-xl font-semibold">Register patient</h1>
+    <div className="mx-auto max-w-2xl">
+      <PageHeader
+        title="Register patient"
+        lead="The record is created at your branch. Staff at other branches will not be able to see it."
+      />
       <Card>
         <form action={createPatientAction} className="grid gap-4 sm:grid-cols-2">
           <Field label="First name"><input className="input" name="first_name" required /></Field>
@@ -38,9 +41,12 @@ export default async function NewPatientPage() {
           </div>
         </form>
       </Card>
-      <p className="text-xs text-slate-500">
-        The patient is registered to your branch. Staff at other branches cannot see this record.
-      </p>
+      <div className="mt-4">
+        <Note>
+          Collect consent for processing health information at registration — it is a Data
+          Privacy Act requirement, not a formality.
+        </Note>
+      </div>
     </div>
   );
 }
