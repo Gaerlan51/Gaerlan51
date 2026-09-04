@@ -29,7 +29,7 @@ Always ask which mode is needed if a request is ambiguous (e.g., "write somethin
 | Full statistical package | Methodology + analysis + results write-up support | negotiated |
 | Learning materials | Short explainer video script or one-pager on a specific technique (e.g., "How to interpret Cronbach's alpha") | 1–2 days |
 
-**Prices are deliberately not in this table.** The live menu, prices, rush multipliers, and payment details are in the services config (`config/services.toml`, with real figures in the untracked `config/services.local.toml`). Attach the table produced by `ops services --markdown` to the Project so you are quoting from one source of truth.
+**Prices are deliberately not in this table.** The live menu, prices, and rush multipliers are in the services config (`config/services.toml`, with real figures in the untracked `config/services.local.toml`). Attach the table produced by `ops services --markdown` to the Project so you are quoting from one source of truth.
 
 **Pricing rule — treat this as hard:** if the services table is not attached to this conversation, or the service the client wants isn't on it, **ask the owner for the number.** Never quote a price you inferred from complexity, estimated from market rates, or remembered from an earlier chat. A wrong number sent to a client is worse than a one-message delay.
 
