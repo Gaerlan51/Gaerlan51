@@ -12,7 +12,7 @@ instructions.
 | `prompts/stats-consulting-master-prompt.md` | The system prompt. Paste into Claude Project → Custom Instructions. |
 | `prompts/operator-notes.md` | This file. Never pasted into the prompt. |
 | `config/services.toml` | Service menu structure, committed, **prices left as placeholders**. |
-| `config/services.local.toml` | Your real prices + GCash details. **Untracked — never committed.** |
+| `config/services.local.toml` | Your real prices. **Untracked — never committed.** |
 | `specs/ops-toolkit-spec.md` | Build spec for the toolkit. Kept as the record of what was built and why. |
 | `scripts/move-to-private.sh` | One-shot move of this system into a private repo. |
 | `ops/`, `templates/`, `tests/` | The toolkit itself. Run it with `./ops.sh <command>`. |
@@ -28,7 +28,7 @@ world-readable. That has two consequences:
 1. **Never commit client data.** Names, schools, thesis topics, contact details, and deadlines are
    personal information about identifiable students. `data/` is gitignored for this reason — keep it
    that way, and don't paste tracker contents into a committed file.
-2. **Never commit your real prices or GCash number.** Those live in `config/services.local.toml`,
+2. **Never commit your real prices.** Those live in `config/services.local.toml`,
    which is gitignored. `config/services.toml` is the committed structure with placeholders.
 
 ### Moving to a private repo
@@ -57,7 +57,7 @@ Either way your tracker never moves: `data/` is gitignored, so it lives only on 
 ## Before first use
 
 1. Copy the price placeholders: `cp config/services.toml config/services.local.toml`, then fill in
-   real figures, your rush multiplier, and your GCash number/QR.
+   real figures and your rush multiplier.
 2. Paste `prompts/stats-consulting-master-prompt.md` into a Claude Project's Custom Instructions.
 3. Attach your services table to the Project as knowledge: `./ops.sh services --markdown`.
 4. Attach 1–2 past sample reports so Claude matches your house format.
@@ -86,7 +86,7 @@ Two habits worth forming:
 - **Documents land in `out/` and are printed to the terminal.** Nothing is ever sent for you —
   copy, edit in your own voice, and send it yourself.
 
-The tool refuses rather than guesses: an unpriced service, a missing GCash number, or an unfilled
+The tool refuses rather than guesses: an unpriced service or an unfilled
 template placeholder stops the command with an error naming the file to fix. That is deliberate.
 A blank in a document you send a client is worse than a command that won't run.
 
@@ -125,7 +125,7 @@ doesn't is worse than no portal at all.
 
 It makes Claude a strong intake / consulting / ops brain. It does **not**:
 
-- collect GCash payments automatically,
+- collect payments,
 - send messages on its own,
 - update a live dashboard by itself,
 - or see your tracker unless you paste it in (or connect a tool that reads it).
@@ -135,6 +135,12 @@ Those need a spreadsheet or the local toolkit now, and later Zapier/Make plus a 
 
 ## Known gaps to close as you go
 
+- **Payment instructions are written by hand, every time.** Nothing stores how you get paid — no
+  account number lives in this repo or in the Claude Project. `ops invoice` prints
+  `[ADD YOUR PAYMENT INSTRUCTIONS HERE BEFORE SENDING.]` where they go, and the prompt is told never
+  to write them for you. It is deliberately impossible to miss, because an invoice that goes out
+  with the marker still in it is embarrassing but recoverable, and one with a wrong account number
+  on it is not.
 - **Prices are unset.** Until `services.local.toml` is filled in, both the prompt and `ops quote`
   will (correctly) refuse to quote and ask you for the number instead. That's the intended failure
   mode — a delayed reply beats a wrong price sent to a client.

@@ -42,7 +42,8 @@ Violating any of these means the change is wrong, however elegant it is.
 4. **Never invent a price.** If a service's `price` is `0` or the key is missing, the tool prints
    `[PRICE NOT SET — ask owner]` in the rendered document and exits non-zero with a message naming
    the file to edit. It never estimates, interpolates, or falls back to a market rate.
-5. **Never guess payment details.** Same rule: `[GCASH DETAILS NOT SET]`, non-zero exit.
+5. **Never write payment instructions.** How the owner gets paid is not stored anywhere and not
+   generated. The invoice carries a literal marker for the owner to replace by hand.
 6. **Every write is undoable.** Before rewriting `data/clients.csv`, copy it to
    `data/.backups/clients-<ISO8601 timestamp>.csv`. Keep the last 20 backups, prune older.
 7. **The tool never sends anything.** Generated documents go to `out/`. Delivery is manual.
@@ -178,9 +179,10 @@ A service priced `0` (i.e. `full_package`) refuses to compute, per constraint 4.
 
 ### `ops invoice <id> [--amount X] [--commit]`
 Renders `templates/invoice.md` with amount due (defaults to `quoted_price`), due date
-(today + `payment_terms_days`), and payment instructions from `[payment]` with `{account_number}`
-and `{account_name}` substituted. With `--commit`, sets `payment_status = invoiced` and records the
-invoice date in `data/history.csv`.
+(today + `payment_terms_days`), and a **How to pay** section holding the literal marker
+`[ADD YOUR PAYMENT INSTRUCTIONS HERE BEFORE SENDING.]` — the owner writes the real instructions into
+each invoice. With `--commit`, sets `payment_status = invoiced` and records the invoice date in
+`data/history.csv`.
 
 ### `ops remind <id> --kind {payment,consult,checkin,delivery} [--tone {gentle,firm}]`
 Renders the matching template. For `payment`, `--tone` is required and the tool prints **both**
@@ -296,3 +298,9 @@ Recorded here rather than silently absorbed, so the spec and the code don't drif
   and says so. Re-quoting late work is a real case; corrupting the pipeline for it isn't worth it.
 - **`[followups]` is absent from the committed `config/services.toml`.** The defaults in §6 apply
   until the owner adds the section, which keeps the committed config free of numbers to maintain.
+- **The payment scheme was removed after the first build.** The original spec had a `[payment]`
+  config block (method, account name and number, a QR path, an instructions template) that the
+  invoice command rendered into each document. That is gone: no account details live in the repo,
+  the config, or the Claude Project, and neither the tool nor the prompt will compose payment
+  wording. `ops invoice` prints an unmissable marker instead. An invoice sent with the marker still
+  in it is embarrassing and fixable; one sent with a stale or wrong account number is neither.

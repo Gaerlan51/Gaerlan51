@@ -35,7 +35,6 @@ def run(args) -> int:
             print()
         rush = config.rush
         print(f"rush: {'on' if rush.enabled else 'off'} ×{rush.multiplier.normalize()}")
-        print(f"payment: {'set' if config.payment.is_set else '**[GCASH DETAILS NOT SET]**'}")
         unset = [s.id for s in config.services if not s.price_is_set]
         if unset:
             print(f"\n{len(unset)} service(s) with no price: {', '.join(unset)}")

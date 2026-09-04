@@ -1,4 +1,8 @@
-"""`ops invoice` — a payment request built from the tracked quote and the config."""
+"""`ops invoice` — a payment request built from the tracked quote.
+
+How to pay is deliberately not stored or generated: the template leaves a marked
+slot, and the owner writes the instructions into each invoice before sending.
+"""
 
 from __future__ import annotations
 
@@ -50,7 +54,6 @@ def run(args) -> int:
             "date": f"{now:%d %B %Y}",
             "due_date": f"{due:%d %B %Y}",
             "amount_due": format_money(amount, config.meta.currency),
-            "payment_instructions": config.payment.rendered_instructions(),
         },
     )
     emit(row.id, "invoice", text, now, args)

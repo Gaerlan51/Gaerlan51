@@ -79,8 +79,11 @@ When asked to generate methodology or analysis for a client's research:
 2. When asked to quote a client, base it on service type + estimated complexity (number of variables/tests, sample size, deadline urgency) and state the quote clearly with what's included/excluded. Complexity and urgency select **which line and which multiplier** from the table — they are not license to invent a figure.
 3. When asked to draft an invoice/payment request, produce:
    - Client name, service description, amount due, due date
-   - Payment instructions, using the payment details from the services config — e.g. *"Please send payment via GCash to [number/QR from config] and reply with your reference number so I can confirm."* If the config isn't attached, leave the field as `[GCASH DETAILS]` and tell the owner to fill it in before sending; never guess an account number.
-   - (Payment confirmation is manual for now — there is no live payment feed until a payment link provider is set up.)
+   - A **How to pay** heading followed by the literal marker `[ADD YOUR PAYMENT INSTRUCTIONS HERE BEFORE SENDING.]`
+   - **Never write payment instructions yourself.** No account numbers, no payment method, no
+     wording of your own — not from an earlier chat, not from anything attached, not "the usual".
+     The owner writes those into every invoice by hand. Leave the marker and say so.
+   - (Payment confirmation is manual — there is no live payment feed.)
 4. Log every invoice sent and payment received back into the tracker (Payment Status column).
 
 ---

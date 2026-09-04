@@ -1,4 +1,4 @@
-"""Service menu, prices, and payment details.
+"""Service menu and prices.
 
 `config/services.toml` is committed with placeholder prices. `config/services.local.toml`
 overlays it key by key and is gitignored, because this is a public repo.
@@ -22,10 +22,6 @@ class ConfigError(OpsError):
 
 class PriceNotSetError(OpsError):
     """Raised instead of guessing. See spec constraint 4."""
-
-
-class PaymentDetailsNotSetError(OpsError):
-    """Raised instead of guessing. See spec constraint 5."""
 
 
 def _unset(value) -> bool:
@@ -60,32 +56,6 @@ class Service:
 
 
 @dataclass(frozen=True)
-class Payment:
-    method: str = "GCash"
-    account_name: str = ""
-    account_number: str = ""
-    qr_image: str = ""
-    instructions: str = ""
-
-    @property
-    def is_set(self) -> bool:
-        return not _unset(self.account_number) and not _unset(self.account_name)
-
-    def rendered_instructions(self) -> str:
-        """The line that goes on an invoice. Refuses rather than guessing an account."""
-        if not self.is_set:
-            raise PaymentDetailsNotSetError(
-                "[GCASH DETAILS NOT SET] — fill in [payment] account_name and account_number "
-                "in config/services.local.toml before sending an invoice."
-            )
-        return self.instructions.format(
-            account_number=self.account_number,
-            account_name=self.account_name,
-            method=self.method,
-        )
-
-
-@dataclass(frozen=True)
 class Meta:
     currency: str = "PHP"
     business_name: str = ""
@@ -115,7 +85,6 @@ class Followups:
 @dataclass(frozen=True)
 class Config:
     meta: Meta = field(default_factory=Meta)
-    payment: Payment = field(default_factory=Payment)
     rush: Rush = field(default_factory=Rush)
     followups: Followups = field(default_factory=Followups)
     services: tuple[Service, ...] = ()
@@ -220,15 +189,6 @@ def load_config(path: Path | None = None, local_path: Path | None = None) -> Con
         payment_terms_days=int(meta_raw.get("payment_terms_days", 7)),
     )
 
-    pay_raw = raw.get("payment", {})
-    payment = Payment(
-        method=pay_raw.get("method", "GCash"),
-        account_name=pay_raw.get("account_name", ""),
-        account_number=pay_raw.get("account_number", ""),
-        qr_image=pay_raw.get("qr_image", ""),
-        instructions=pay_raw.get("instructions", ""),
-    )
-
     rush_raw = raw.get("rush", {})
     multiplier = _money(rush_raw.get("multiplier", 1), "rush.multiplier")
     if multiplier < 1:
@@ -246,7 +206,6 @@ def load_config(path: Path | None = None, local_path: Path | None = None) -> Con
 
     return Config(
         meta=meta,
-        payment=payment,
         rush=rush,
         followups=followups,
         services=_build_services(raw.get("service", [])),

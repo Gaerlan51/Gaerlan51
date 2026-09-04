@@ -1,8 +1,8 @@
 # Service menu — committed structure, PLACEHOLDER prices.
 #
 # Real figures belong in config/services.local.toml, which is gitignored.
-# This repo is a public GitHub profile repo; do not put real prices, your GCash
-# number, or anything client-identifying in this file.
+# This repo is a public GitHub profile repo; do not put real prices or anything
+# client-identifying in this file.
 #
 #   cp config/services.toml config/services.local.toml   # then fill it in
 #
@@ -17,14 +17,6 @@ business_name = "Inciong Statistical Consulting"
 quote_valid_days = 14
 # Days after invoice date that payment is due.
 payment_terms_days = 7
-
-[payment]
-method = "GCash"
-account_name = "[FILL IN]"
-account_number = "[FILL IN]"
-# Optional path to a QR image you send alongside the invoice.
-qr_image = ""
-instructions = "Please send payment via GCash to {account_number} ({account_name}) and reply with your reference number so I can confirm."
 
 # ---------------------------------------------------------------------------
 # Services. `price` is the base figure; `price_note` explains what moves it.

@@ -12,9 +12,9 @@ ${service_includes}
 
 **How to pay**
 
-${payment_instructions}
+> **[ADD YOUR PAYMENT INSTRUCTIONS HERE BEFORE SENDING.]**
 
-Once I have your reference number I'll confirm receipt here, and work starts
+Once I have your proof of payment I'll confirm receipt here, and work starts
 from that confirmation.
 
 Thanks,

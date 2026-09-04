@@ -10,11 +10,6 @@ BASE = """
 currency = "PHP"
 payment_terms_days = 7
 
-[payment]
-account_name = "[FILL IN]"
-account_number = "[FILL IN]"
-instructions = "Send to {account_number} ({account_name})."
-
 [[service]]
 id = "methodology"
 name = "Methodology consult"
@@ -55,7 +50,6 @@ class ConfigTests(unittest.TestCase):
         config = load_config(self.base)
         self.assertEqual([s.id for s in config.services], ["methodology", "analysis"])
         self.assertFalse(config.service("analysis").price_is_set)
-        self.assertFalse(config.payment.is_set)
 
     def test_local_overlay_replaces_one_key_and_leaves_the_rest(self):
         write(
@@ -91,27 +85,6 @@ class ConfigTests(unittest.TestCase):
         )
         config = load_config(self.base)
         self.assertEqual(config.service("coaching").price, Decimal("1500"))
-
-    def test_payment_details_placeholder_counts_as_unset(self):
-        config = load_config(self.base)
-        with self.assertRaises(Exception) as ctx:
-            config.payment.rendered_instructions()
-        self.assertIn("GCASH DETAILS NOT SET", str(ctx.exception))
-
-    def test_payment_instructions_render_once_filled(self):
-        write(
-            self.tmp,
-            "services.local.toml",
-            """
-            [payment]
-            account_name = "Test Owner"
-            account_number = "0917 000 0000"
-            """,
-        )
-        config = load_config(self.base)
-        self.assertEqual(
-            config.payment.rendered_instructions(), "Send to 0917 000 0000 (Test Owner)."
-        )
 
     def test_duplicate_service_id_rejected(self):
         bad = write(self.tmp, "dup.toml", BASE + '\n[[service]]\nid = "analysis"\nprice = 1\n')

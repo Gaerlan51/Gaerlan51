@@ -16,11 +16,6 @@ business_name = "Test Consulting"
 quote_valid_days = 14
 payment_terms_days = 7
 
-[payment]
-account_name = "Test Owner"
-account_number = "0917 000 0000"
-instructions = "Please send payment via GCash to {account_number} ({account_name})."
-
 [[service]]
 id = "analysis"
 name = "Data analysis"
@@ -144,25 +139,22 @@ class InvoiceTests(CliCase):
         self.assertEqual(code, 1)
         self.assertIn("PRICE NOT SET", out)
 
-    def test_invoice_carries_payment_details_and_due_date(self):
+    def test_invoice_carries_the_due_date_and_marks_the_client_invoiced(self):
         rid = self.add_client(deadline="2026-12-01")
         self.run_ops("quote", rid, "--commit")
         code, out = self.run_ops("invoice", rid, "--commit")
         self.assertEqual(code, 0, out)
-        self.assertIn("0917 000 0000", out)
         self.assertIn("11 September 2026", out)
         self.assertEqual(read_rows(self.tracker)[0].payment_status, "invoiced")
 
-    def test_invoice_refuses_when_payment_details_are_placeholders(self):
-        self.config.write_text(
-            BASE_CONFIG.replace('account_number = "0917 000 0000"', 'account_number = "[FILL IN]"'),
-            encoding="utf-8",
-        )
+    def test_invoice_leaves_an_unmissable_slot_for_payment_instructions(self):
+        # How to pay is written by hand per invoice, never stored or generated.
         rid = self.add_client(deadline="2026-12-01")
         self.run_ops("quote", rid, "--commit")
         code, out = self.run_ops("invoice", rid)
-        self.assertEqual(code, 1)
-        self.assertIn("GCASH DETAILS NOT SET", out)
+        self.assertEqual(code, 0, out)
+        self.assertIn("ADD YOUR PAYMENT INSTRUCTIONS HERE", out)
+        self.assertNotIn("GCash", out)
 
 
 class ReminderTests(CliCase):
