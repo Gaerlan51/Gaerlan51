@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",
     "test:db": "vitest run tests/db",
-    "verify": "npm run guard:service-role && npm run typecheck && npm run test"
+    "verify": "npm run guard:service-role && npm run typecheck && npm run test",
+    "fetch:stock": "node scripts/fetch-stock.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.1.6",

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import {
-  Hero, PayerStrip, Section, ServicesGrid, CareModel, BranchGrid, Faq, CallToAction,
+  Hero, PayerStrip, PracticeBand, Section, ServicesGrid, CareModel, BranchGrid, Faq,
+  CallToAction,
 } from '@/components/marketing/sections';
 import { IconArrow } from '@/components/icons';
 
@@ -22,6 +23,8 @@ export default function HomePage() {
           </Link>
         </div>
       </Section>
+
+      <PracticeBand />
 
       <div className="border-y border-line bg-surface">
         <Section

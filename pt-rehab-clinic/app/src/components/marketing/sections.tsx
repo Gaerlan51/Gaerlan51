@@ -4,6 +4,8 @@ import {
   IconCheck, IconArrow, IconPin, IconPhone, IconShield, IconClock, IconUsers,
 } from '@/components/icons';
 import { site, services, branches, payers, faqs, type ServiceEntry } from '@/lib/site';
+import { Figure } from './Figure';
+import type { ImageKey } from '@/lib/images';
 
 const SERVICE_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
   physiatry: IconStethoscope,
@@ -88,9 +90,12 @@ export function Hero() {
               </div>
             ))}
           </dl>
+
         </div>
 
-        <PlanPreview />
+        <div className="hidden lg:block">
+          <PlanPreview />
+        </div>
       </div>
     </section>
   );
@@ -104,7 +109,7 @@ export function Hero() {
 function PlanPreview() {
   const sessions = [true, true, true, true, false, false];
   return (
-    <div className="hidden animate-fade-up lg:block" aria-hidden="true">
+    <div className="animate-fade-up" aria-hidden="true">
       <div className="rounded-2xl border border-line bg-surface p-6 shadow-panel">
         <div className="flex items-center justify-between">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
@@ -153,6 +158,14 @@ function PlanPreview() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+export function PracticeBand() {
+  return (
+    <div className="shell py-4">
+      <Figure slot="practice" priority sizes="(min-width: 1280px) 72rem, 100vw" />
     </div>
   );
 }
@@ -232,7 +245,14 @@ export function BranchGrid() {
   return (
     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {branches.map((branch) => (
-        <article key={branch.id} id={branch.id} className="card-interactive scroll-mt-24">
+        <article key={branch.id} id={branch.id} className="card-interactive scroll-mt-24 p-0">
+          <Figure
+            slot={branch.id as ImageKey}
+            rounded="rounded-t-xl"
+            className="border-0 border-b"
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          />
+          <div className="p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h3 className="text-base font-semibold">{branch.name}</h3>
@@ -250,6 +270,7 @@ export function BranchGrid() {
               <li key={s} className="rounded-md bg-raised px-2 py-1 text-[11px] font-medium text-muted">{s}</li>
             ))}
           </ul>
+          </div>
         </article>
       ))}
     </div>

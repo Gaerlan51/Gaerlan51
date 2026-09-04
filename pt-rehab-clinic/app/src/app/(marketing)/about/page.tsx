@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Section, CareModel, CallToAction } from '@/components/marketing/sections';
 import { IconShield, IconCheck } from '@/components/icons';
+import { Figure } from '@/components/marketing/Figure';
 import { site } from '@/lib/site';
 
 export const metadata: Metadata = {
@@ -44,6 +45,8 @@ export default function AboutPage() {
         title="Rehabilitation medicine, practised deliberately"
         lead={`${site.name} is a physician-led practice across five branches. We treat function — walking, gripping, speaking, working — and we structure care so that progress is verified rather than hoped for.`}
       >
+        <Figure slot="about" priority sizes="(min-width: 1280px) 72rem, 100vw" className="mb-10" />
+
         <div className="grid gap-5 sm:grid-cols-2">
           {PRINCIPLES.map((p) => (
             <article key={p.title} className="card">

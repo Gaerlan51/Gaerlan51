@@ -100,6 +100,42 @@ same tokens, no component carries a second palette.
   `prefers-reduced-motion` honoured. Verified in a real browser, not assumed.
 - **Print** — `.no-print` strips chrome so a chart or letter prints clean.
 
+## Images
+
+Every image on the public site is a **slot** in `src/lib/images.ts`, carrying its alt
+text, aspect ratio, and a one-line brief describing the photograph that belongs there.
+`<Figure slot="…">` renders the photograph once one exists and draws brand artwork
+until then — same box, same ratio either way, so dropping real photography in never
+reflows the page.
+
+No photographs ship in this repo: the sandbox this was built in blocks outbound access
+to image hosts, so none could be downloaded. The artwork in the slots today is
+hand-drawn SVG, not a grey box, and the site is presentable as it stands.
+
+**To fill the slots with licensed stock:**
+
+```bash
+PEXELS_API_KEY=... npm run fetch:stock          # all slots
+PEXELS_API_KEY=... npm run fetch:stock -- hero  # one slot
+```
+
+The script searches each slot's brief, picks the result whose aspect ratio best matches
+the slot, downloads to `public/images/`, and records the photographer credit in
+`src/lib/images.generated.json`. It has never been executed — the slot parsing was
+verified here, the network path was not. Check the first result before trusting the
+rest, and remember that a search result is not an editorial decision.
+
+**To use the clinic's own photography**, drop files in `public/images/` and set `src`
+on the slot directly. Prefer this: real rooms and real staff (with their written
+permission) beat stock models of strangers.
+
+Two rules no script can enforce:
+
+1. **Never a real patient.** A patient photograph is health information under RA 10173,
+   and consent to treatment is not consent to appear in marketing.
+2. **Don't let stock imply otherwise.** Stock models are strangers; a caption must not
+   suggest they are your patients or your results.
+
 ## What is verified, and what is not
 
 Verified by `npm run verify` against a real Postgres with RLS active:

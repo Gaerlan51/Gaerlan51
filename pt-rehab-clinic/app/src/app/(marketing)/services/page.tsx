@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Section, ServicesGrid, CallToAction } from '@/components/marketing/sections';
+import { Figure } from '@/components/marketing/Figure';
 
 export const metadata: Metadata = {
   title: 'Services',
@@ -17,6 +18,7 @@ export default function ServicesPage() {
         title="Rehabilitation medicine, end to end"
         lead="Each service below is delivered under a plan written by a rehabilitation physician, not booked in isolation. If you are unsure which you need, start with a consultation."
       >
+        <Figure slot="services" priority sizes="(min-width: 1280px) 72rem, 100vw" className="mb-12" />
         <ServicesGrid detailed />
       </Section>
 
