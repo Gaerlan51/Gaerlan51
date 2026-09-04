@@ -14,6 +14,7 @@ instructions.
 | `config/services.toml` | Service menu structure, committed, **prices left as placeholders**. |
 | `config/services.local.toml` | Your real prices. **Untracked — never committed.** |
 | `specs/ops-toolkit-spec.md` | Build spec for the toolkit. Kept as the record of what was built and why. |
+| `scripts/serve.py` | Run the site locally, the way Vercel serves it. |
 | `scripts/move-to-private.sh` | One-shot move of this system into a private repo. |
 | `ops/`, `templates/`, `tests/` | The toolkit itself. Run it with `./ops.sh <command>`. |
 | `web/` | The public site: `index.html`, `login.html`, one stylesheet, one script. |
@@ -95,6 +96,17 @@ A blank in a document you send a client is worse than a command that won't run.
 `web/` is a static site — no framework, no build step needed to deploy. Upload the folder to any
 static host and it works as-is. `python3 scripts/build-site.py` optionally flattens each page into a
 single self-contained file in `web/dist/` if your host prefers that.
+
+### Running it on your own machine
+
+```sh
+python3 scripts/serve.py          # http://localhost:8000
+```
+
+Opening `web/index.html` straight off disk mostly works, but it is not what a visitor gets —
+`file://` resolves paths differently and never exercises the clean URLs. The script mirrors
+`vercel.json`, so `/` and `/login` behave locally exactly as they will once deployed. Pass a port
+number if 8000 is busy. Ctrl-C stops it.
 
 ### Deploying to Vercel
 
