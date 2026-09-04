@@ -14,6 +14,7 @@ instructions.
 | `config/services.toml` | Service menu structure, committed, **prices left as placeholders**. |
 | `config/services.local.toml` | Your real prices + GCash details. **Untracked — never committed.** |
 | `specs/ops-toolkit-spec.md` | Build spec for the toolkit. Kept as the record of what was built and why. |
+| `scripts/move-to-private.sh` | One-shot move of this system into a private repo. |
 | `ops/`, `templates/`, `tests/` | The toolkit itself. Run it with `./ops.sh <command>`. |
 | `data/` | Client tracker CSV. **Untracked — contains client personal data.** |
 | `out/` | Generated quotes, invoices, reports. **Untracked.** |
@@ -29,8 +30,28 @@ world-readable. That has two consequences:
 2. **Never commit your real prices or GCash number.** Those live in `config/services.local.toml`,
    which is gitignored. `config/services.toml` is the committed structure with placeholders.
 
-If this business grows past a couple of clients, move all of this to a private repo. A public profile
-repo is a fine place for the prompt and the spec; it is the wrong place for an operational tracker.
+### Moving to a private repo
+
+A public profile repo is a fine place for the prompt, the spec, and the toolkit — none of them
+contain client data or real prices. It is the wrong place for an operational tracker. Move before
+the first real client goes in, not after:
+
+```sh
+gh auth login                          # once
+sh scripts/move-to-private.sh          # creates the private repo and pushes
+```
+
+The script creates and pushes only. It prints three cleanup steps to do by hand afterwards, the last
+of which — deleting the work from the public repo — is the only destructive one.
+
+No `gh`? Create an empty private repo in the GitHub web UI, then from this repo root:
+
+```sh
+git remote add private https://github.com/<you>/stats-consulting-ops.git
+git push private HEAD:refs/heads/main
+```
+
+Either way your tracker never moves: `data/` is gitignored, so it lives only on your machine.
 
 ## Before first use
 
