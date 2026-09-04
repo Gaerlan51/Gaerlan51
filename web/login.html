@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Client login — Aralytics</title>
+<meta name="description" content="Sign in to the Aralytics client portal to see your reports, invoices, and project status.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#signin">Skip to sign-in</a>
+
+<div class="auth">
+
+  <aside class="auth__aside">
+    <a class="brand" href="./index.html"><svg class="brand__glyph" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <path d="M3 6.5v13M23 6.5v13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M3 13h6.4M16.6 13H23" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      <circle cx="13" cy="13" r="3.4" stroke="var(--accent)" stroke-width="2"/>
+    </svg><span class="brand__name">Aralytics</span></a>
+
+    <div class="stack" style="gap:1.75rem">
+      <p class="auth__quote">Your analysis, your invoices, and where the work stands &mdash; in one place.</p>
+      <ul class="auth__list">
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5 6 11l6.5-6.5" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b style="color:var(--ink);font-weight:600">Your reports.</b> Every consultation report delivered on your project, with the version history.</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5 6 11l6.5-6.5" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b style="color:var(--ink);font-weight:600">Invoices and payments.</b> What was quoted, what was invoiced, and what has been confirmed received.</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5 6 11l6.5-6.5" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b style="color:var(--ink);font-weight:600">Where your project stands.</b> The same status the consultant sees &mdash; scoping, in progress, delivered.</span></li>
+      </ul>
+    </div>
+
+    <div class="stack" style="gap:.75rem;max-width:16rem">
+      <span class="interval" aria-hidden="true"><i class="cap"></i><i class="whisker"></i><i class="est"></i><i class="whisker"></i><i class="cap"></i></span>
+      <span class="small">Files are kept only as long as your project needs them, and are never reused as examples.</span>
+    </div>
+  </aside>
+
+  <main class="auth__main" id="signin">
+    <div class="auth__card">
+      <div class="auth__head">
+        <a class="brand" href="./index.html" style="margin-bottom:.75rem"><svg class="brand__glyph" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <path d="M3 6.5v13M23 6.5v13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M3 13h6.4M16.6 13H23" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      <circle cx="13" cy="13" r="3.4" stroke="var(--accent)" stroke-width="2"/>
+    </svg><span class="brand__name">Aralytics</span></a>
+        <h1 style="font-size:var(--step-2)">Client sign-in</h1>
+        <p class="small">Use the email address your enquiry came from.</p>
+      </div>
+
+      <form class="form" id="signin-form" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@university.edu.ph" required>
+        </div>
+        <div class="field">
+          <div class="auth__row">
+            <label for="password">Password</label>
+            <a class="small" href="#reset" style="color:var(--accent)">Forgot?</a>
+          </div>
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <button class="btn btn--primary btn--wide" type="submit">Sign in</button>
+      </form>
+
+      <!-- Front end only. There is no account system behind this yet: the handler
+           below never reads the password field and never stores or sends anything.
+           Wire it to a real identity provider before this page goes live. -->
+      <p class="notice" id="signin-note" hidden>
+        <span aria-hidden="true">&#9888;</span>
+        <span><b>Sign-in isn&rsquo;t connected yet.</b> The client portal is still being built &mdash; for now, reply on the thread where you sent your enquiry and you&rsquo;ll get your report and invoice there.</span>
+      </p>
+
+      <p class="auth__alt">Not a client yet? <a href="./index.html#start">Send your study details</a>.</p>
+    </div>
+  </main>
+</div>
+
+<script>
+/* No credentials are read, stored, or transmitted. The form exists so the page
+   can be designed and reviewed; wiring it up is a deliberate later step. */
+(function () {
+  "use strict";
+  var form = document.getElementById("signin-form");
+  var note = document.getElementById("signin-note");
+  if (!form || !note) return;
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    note.hidden = false;
+    note.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  });
+})();
+</script>
+</body>
+</html>

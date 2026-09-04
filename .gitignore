@@ -11,3 +11,6 @@ __pycache__/
 .venv/
 venv/
 .pytest_cache/
+
+# Build output — deploy web/ directly, or rebuild with scripts/build-site.py
+web/dist/

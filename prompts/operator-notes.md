@@ -16,6 +16,7 @@ instructions.
 | `specs/ops-toolkit-spec.md` | Build spec for the toolkit. Kept as the record of what was built and why. |
 | `scripts/move-to-private.sh` | One-shot move of this system into a private repo. |
 | `ops/`, `templates/`, `tests/` | The toolkit itself. Run it with `./ops.sh <command>`. |
+| `web/` | The public site: `index.html`, `login.html`, one stylesheet, one script. |
 | `data/` | Client tracker CSV. **Untracked — contains client personal data.** |
 | `out/` | Generated quotes, invoices, reports. **Untracked.** |
 
@@ -88,6 +89,32 @@ Two habits worth forming:
 The tool refuses rather than guesses: an unpriced service, a missing GCash number, or an unfilled
 template placeholder stops the command with an error naming the file to fix. That is deliberate.
 A blank in a document you send a client is worse than a command that won't run.
+
+## The website
+
+`web/` is a static site — no framework, no build step needed to deploy. Upload the folder to any
+static host (GitHub Pages, Netlify, Cloudflare Pages) and it works as-is. `python3
+scripts/build-site.py` optionally flattens each page into a single self-contained file in
+`web/dist/` if your host prefers that.
+
+Three things in it are placeholders you must replace before it goes live:
+
+1. **The name.** "Aralytics" is a stand-in. Search `web/` for it, and set the same name in
+   `config/services.local.toml` under `business_name` so quotes and invoices match the site.
+2. **The email.** `hello@yourdomain.ph` appears twice in `index.html`. Use a business address, not
+   your personal one.
+3. **The service copy.** The FAQ says analysis is run "commonly SPSS, JASP, or R" and that output is
+   APA-formatted. Make that true of you, or change it — a claim on your own site is one a client can
+   hold you to.
+
+The enquiry form submits nowhere by design: it composes a labelled message the visitor copies and
+sends you. Those labels are exactly what `ops add --from-intake` parses, so an enquiry pasted from
+Messenger into a file goes into the tracker without retyping.
+
+`login.html` is a front end only. Its handler never reads the password field and never stores or
+sends anything, and the page says so plainly when someone submits it. Do not put it in front of real
+clients until there is an actual account system behind it — a sign-in box that appears to work but
+doesn't is worse than no portal at all.
 
 ## What this prompt does *not* do
 
