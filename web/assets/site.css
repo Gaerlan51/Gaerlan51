@@ -107,6 +107,8 @@ body {
   font-size: var(--step-0);
   line-height: 1.62;
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.14; text-wrap: balance; margin: 0; }
@@ -164,7 +166,9 @@ a:hover { text-decoration-color: var(--accent); }
 /* --- header --------------------------------------------------------------- */
 .masthead {
   position: sticky; top: 0; z-index: 20;
+  background: var(--paper);
   background: color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
   backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: 1px solid var(--rule);
 }
@@ -312,12 +316,21 @@ a:hover { text-decoration-color: var(--accent); }
 .field { display: flex; flex-direction: column; gap: .35rem; }
 .field label { font-family: var(--mono); font-size: var(--step--2); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
 .field input, .field select, .field textarea {
-  font: 400 1rem/1.5 var(--body);
+  font: 400 1rem/1.5 var(--body);   /* >= 16px, or iOS zooms the page on focus */
   color: var(--ink); background: var(--surface);
   border: 1px solid var(--rule-2); border-radius: var(--radius);
   padding: .68rem .8rem;
   width: 100%;
+  min-height: 2.9rem;               /* type=date renders taller than type=text on iOS */
 }
+.field select {
+  -webkit-appearance: none; appearance: none;
+  padding-right: 2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%237E918C' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .8rem center;
+}
+.field input[type="date"] { -webkit-appearance: none; appearance: none; }
 .field textarea { resize: vertical; min-height: 6.5rem; }
 .field input::placeholder, .field textarea::placeholder { color: var(--ink-3); opacity: .75; }
 .field--row { display: grid; gap: .95rem; }
@@ -335,7 +348,8 @@ a:hover { text-decoration-color: var(--accent); }
 }
 .notice {
   display: flex; gap: .6rem; align-items: flex-start;
-  background: var(--mark-soft); border: 1px solid color-mix(in srgb, var(--mark) 35%, transparent);
+  background: var(--mark-soft); border: 1px solid var(--mark);
+  border-color: color-mix(in srgb, var(--mark) 35%, transparent);
   border-radius: var(--radius); padding: .7rem .85rem; font-size: .9rem; color: var(--ink-2);
 }
 .notice b { color: var(--ink); }
@@ -351,7 +365,7 @@ a:hover { text-decoration-color: var(--accent); }
 .foot__fine { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; justify-content: space-between; }
 
 /* --- login ---------------------------------------------------------------- */
-.auth { min-height: 100vh; display: grid; }
+.auth { min-height: 100vh; min-height: 100dvh; display: grid; }
 @media (min-width: 900px) { .auth { grid-template-columns: 1.05fr 1fr; } }
 .auth__aside {
   display: none; flex-direction: column; justify-content: space-between; gap: 3rem;
