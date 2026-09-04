@@ -12,7 +12,7 @@
 [meta]
 currency = "PHP"
 # Shown on quotes and invoices.
-business_name = "[FILL IN]"
+business_name = "Inciong Statistical Consulting"
 # Days a quote stays valid before it needs re-issuing.
 quote_valid_days = 14
 # Days after invoice date that payment is due.

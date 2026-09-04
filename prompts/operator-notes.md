@@ -97,15 +97,16 @@ static host (GitHub Pages, Netlify, Cloudflare Pages) and it works as-is. `pytho
 scripts/build-site.py` optionally flattens each page into a single self-contained file in
 `web/dist/` if your host prefers that.
 
-Three things in it are placeholders you must replace before it goes live:
+One placeholder is left before it goes live:
 
-1. **The name.** "Aralytics" is a stand-in. Search `web/` for it, and set the same name in
-   `config/services.local.toml` under `business_name` so quotes and invoices match the site.
-2. **The email.** `hello@yourdomain.ph` appears twice in `index.html`. Use a business address, not
-   your personal one.
-3. **The service copy.** The FAQ says analysis is run "commonly SPSS, JASP, or R" and that output is
-   APA-formatted. Make that true of you, or change it — a claim on your own site is one a client can
-   hold you to.
+1. **The Messenger handle.** `m.me/your-username` appears three times in `index.html` — replace it with
+   your page's real username. The site sends every enquiry there; there is deliberately no email
+   address on it, so this one is load-bearing.
+
+The name and the software claims are settled: the wordmark reads **Inciong Statistical Consulting**
+(set as a two-line lockup so it fits a nav bar), `business_name` in `config/services.toml` matches it
+so quotes and invoices agree with the site, and the FAQ names SPSS, Stata, and JASP with Excel for
+data preparation — not R.
 
 The enquiry form submits nowhere by design: it composes a labelled message the visitor copies and
 sends you. Those labels are exactly what `ops add --from-intake` parses, so an enquiry pasted from
