@@ -1,0 +1,72 @@
+# Service menu — committed structure, PLACEHOLDER prices.
+#
+# Real figures belong in config/services.local.toml, which is gitignored.
+# This repo is a public GitHub profile repo; do not put real prices, your GCash
+# number, or anything client-identifying in this file.
+#
+#   cp config/services.toml config/services.local.toml   # then fill it in
+#
+# Values here are read by the ops toolkit (see specs/ops-toolkit-spec.md).
+# services.local.toml, when present, overrides this file key by key.
+
+[meta]
+currency = "PHP"
+# Shown on quotes and invoices.
+business_name = "[FILL IN]"
+# Days a quote stays valid before it needs re-issuing.
+quote_valid_days = 14
+# Days after invoice date that payment is due.
+payment_terms_days = 7
+
+[payment]
+method = "GCash"
+account_name = "[FILL IN]"
+account_number = "[FILL IN]"
+# Optional path to a QR image you send alongside the invoice.
+qr_image = ""
+instructions = "Please send payment via GCash to {account_number} ({account_name}) and reply with your reference number so I can confirm."
+
+# ---------------------------------------------------------------------------
+# Services. `price` is the base figure; `price_note` explains what moves it.
+# Use price = 0 to mean "quote individually" — the toolkit must then refuse to
+# emit a number and prompt the owner instead.
+# ---------------------------------------------------------------------------
+
+[[service]]
+id = "methodology"
+name = "Methodology consult"
+includes = "Recommend research design, sampling method, and appropriate statistical test(s) for the research questions/hypotheses"
+turnaround_days = [2, 4]
+price = 0            # [FILL IN]
+price_note = "Flat per consult."
+
+[[service]]
+id = "analysis"
+name = "Data analysis"
+includes = "Run/explain the statistical analysis (e.g., regression, ANOVA, SEM), produce tables + interpretation"
+turnaround_days = [5, 10]
+price = 0            # [FILL IN] base, covers the complexity band below
+price_note = "Base covers up to 3 tests / 1 dataset. Add per additional test."
+price_per_extra_test = 0   # [FILL IN]
+
+[[service]]
+id = "full_package"
+name = "Full statistical package"
+includes = "Methodology + analysis + results write-up support"
+turnaround_days = [10, 21]
+price = 0            # 0 = quote individually
+price_note = "Negotiated per scope. Do not auto-quote."
+
+[[service]]
+id = "learning_material"
+name = "Learning materials"
+includes = "Short explainer video script or one-pager on a specific technique"
+turnaround_days = [1, 2]
+price = 0            # [FILL IN]
+price_note = "Per topic."
+
+[rush]
+# Applied when the client's deadline is inside the service's normal turnaround.
+enabled = true
+multiplier = 1.0     # [FILL IN] e.g. 1.25 for +25%
+note = "Rush pricing applies when the deadline is shorter than the standard turnaround."

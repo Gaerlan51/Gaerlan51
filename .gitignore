@@ -1,0 +1,13 @@
+# Client personal data — never commit. See prompts/operator-notes.md.
+data/
+out/
+
+# Real prices and payment details.
+config/services.local.toml
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
