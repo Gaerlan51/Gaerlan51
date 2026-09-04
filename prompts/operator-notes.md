@@ -97,10 +97,7 @@ static host (GitHub Pages, Netlify, Cloudflare Pages) and it works as-is. `pytho
 scripts/build-site.py` optionally flattens each page into a single self-contained file in
 `web/dist/` if your host prefers that.
 
-One placeholder is left before it goes live:
-
-1. **The Messenger handle.** `m.me/your-username` appears twice in `index.html` — replace it with your
-   page's real username, or delete both links if you would rather take everything by email.
+Nothing is left as a placeholder — the site is complete and deployable as it stands.
 
 Contact is `gaerlanbong226@gmail.com`, shown on the enquiry notice, the footer, and the sign-in
 page. Two things worth knowing about publishing it: a plain address on a public page collects spam
@@ -108,10 +105,12 @@ within weeks, and a personal Gmail reads differently from a business address to 
 consultants. Neither is a reason not to launch — but a forwarding address on your own domain later
 is cheap, and swapping it is one string in two files.
 
-The name and the software claims are settled: the wordmark reads **Inciong Statistical Consulting**
-(set as a two-line lockup so it fits a nav bar), `business_name` in `config/services.toml` matches it
-so quotes and invoices agree with the site, and the FAQ names SPSS, Stata, and JASP with Excel for
-data preparation — not R.
+To add Messenger as a second route once you have a page, put this back in the footer's Clients list
+and in the enquiry notice, with your real handle:
+
+```html
+<li><a href="https://m.me/YOUR-HANDLE">Message on Messenger</a></li>
+```
 
 The enquiry form submits nowhere by design: it composes a labelled message the visitor copies and
 sends you. Those labels are exactly what `ops add --from-intake` parses, so an enquiry pasted from
