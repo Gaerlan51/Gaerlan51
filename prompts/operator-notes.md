@@ -93,9 +93,26 @@ A blank in a document you send a client is worse than a command that won't run.
 ## The website
 
 `web/` is a static site — no framework, no build step needed to deploy. Upload the folder to any
-static host (GitHub Pages, Netlify, Cloudflare Pages) and it works as-is. `python3
-scripts/build-site.py` optionally flattens each page into a single self-contained file in
-`web/dist/` if your host prefers that.
+static host and it works as-is. `python3 scripts/build-site.py` optionally flattens each page into a
+single self-contained file in `web/dist/` if your host prefers that.
+
+### Deploying to Vercel
+
+`vercel.json` in the repo root already points Vercel at `web/`, so there is nothing to configure:
+
+1. Go to vercel.com, sign in with GitHub, and click **Add New → Project**.
+2. Import this repository. Leave the framework preset as **Other**; do not set a build command.
+3. Deploy. You get a live URL at `<project>.vercel.app` in about a minute.
+
+Every push to the branch redeploys automatically. A custom domain, when you have one, is added under
+the project's **Domains** tab — Vercel issues the HTTPS certificate itself.
+
+Two settings worth knowing about: `cleanUrls` serves the sign-in page at `/login` (the `.html` links
+still work, they just redirect), and three security headers are set for every response. Neither
+needs your attention; they are there so you do not have to think about them.
+
+**Before you deploy, remember the site becomes public**, with your Gmail address on it and the
+wordmark as it currently reads. Both are one edit away if either is wrong.
 
 Nothing is left as a placeholder — the site is complete and deployable as it stands.
 
