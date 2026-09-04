@@ -18,23 +18,31 @@ on conflict (id) do nothing;
 
 -- Two therapists and two rooms per branch, per the spec §15 default.
 do $$
-declare c record; i int;
+declare c record; i int; n int := 0;
 begin
-  for c in select id, name from clinics loop
+  for c in select id, name from clinics order by name loop
+    n := n + 1;
     for i in 1..2 loop
       insert into rooms (clinic_id, name) values (c.id, 'Therapy Room ' || i);
     end loop;
-    insert into staff (clinic_id, role, full_name, discipline) values
-      (c.id, 'admin', 'Front Desk — ' || c.name, null),
-      (c.id, 'therapist', 'PT Therapist — ' || c.name, 'PT'),
-      (c.id, 'therapist', 'OT Therapist — ' || c.name, 'OT');
+    i := n;
+    -- Emails are placeholders: replace them with real work addresses before
+    -- running `npm run staff:link`, which creates an Auth account per address.
+    insert into staff (clinic_id, role, full_name, discipline, email) values
+      (c.id, 'admin', 'Front Desk — ' || c.name, null,
+       'frontdesk.' || i || '@example.ph'),
+      (c.id, 'therapist', 'PT Therapist — ' || c.name, 'PT',
+       'pt.' || i || '@example.ph'),
+      (c.id, 'therapist', 'OT Therapist — ' || c.name, 'OT',
+       'ot.' || i || '@example.ph');
   end loop;
 end;
 $$;
 
 -- The owner-doctor is based at Branch 1 and reads across all five.
-insert into staff (clinic_id, role, full_name, discipline, prc_license_no)
+insert into staff (clinic_id, role, full_name, discipline, prc_license_no, email)
 values ('11111111-1111-1111-1111-111111111101', 'owner',
-        'Dr. [owner name to confirm]', 'MD', '[PRC licence no. to confirm]');
+        'Dr. [owner name to confirm]', 'MD', '[PRC licence no. to confirm]',
+        'owner@example.ph');
 
 -- Programme templates: intentionally none. See spec §15.

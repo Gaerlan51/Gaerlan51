@@ -14,7 +14,10 @@
     "test:unit": "vitest run tests/unit",
     "test:db": "vitest run tests/db",
     "verify": "npm run guard:service-role && npm run typecheck && npm run test",
-    "fetch:stock": "node scripts/fetch-stock.mjs"
+    "fetch:stock": "node scripts/fetch-stock.mjs",
+    "db:bootstrap": "node scripts/db-bootstrap.mjs",
+    "staff:link": "node scripts/staff-link.mjs",
+    "preflight": "node scripts/preflight.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.1.6",

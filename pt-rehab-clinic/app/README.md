@@ -162,12 +162,22 @@ the Semaphore sender ID.
 
 ## Deploying
 
-1. Create the Supabase project (Singapore, `ap-southeast-1`).
-2. Apply `supabase/migrations/*.sql` in order, then `supabase/seed.sql`.
-3. Create Auth users for staff, then set `staff.auth_user_id` to match. Nobody can sign
-   in until this is done.
-4. Set the environment variables from `.env.example`.
-5. Schedule `POST /api/cron/reminders` hourly with the `CRON_SECRET` bearer token.
+See **[DEPLOY.md](DEPLOY.md)** for the runbook. In short:
+
+```bash
+DATABASE_URL=…  npm run db:bootstrap -- --seed   # schema + branches, safe to re-run
+DATABASE_URL=…  npm run staff:link -- --dry-run  # who will get an account
+DATABASE_URL=…  SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=…  npm run staff:link
+npm run preflight -- https://your-app.vercel.app # 11 checks; non-zero means don't launch
+```
+
+Root Directory on Vercel is `pt-rehab-clinic/app`. No deploy token is needed — the
+GitHub integration authenticates itself.
+
+`db:bootstrap` records each migration in `schema_migrations`, so re-running it is a
+no-op; it refuses a database that is not a Supabase project, and refuses a migration
+edited after it was applied. `preflight` asserts that no clinical route, and no CSV
+export, answers an anonymous request.
 
 RA 10173 note: this app supports compliance but does not constitute it. NPC
 registration, a Data Protection Officer, patient consent forms and breach-notification
