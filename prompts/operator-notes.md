@@ -99,9 +99,14 @@ scripts/build-site.py` optionally flattens each page into a single self-containe
 
 One placeholder is left before it goes live:
 
-1. **The Messenger handle.** `m.me/your-username` appears three times in `index.html` — replace it with
-   your page's real username. The site sends every enquiry there; there is deliberately no email
-   address on it, so this one is load-bearing.
+1. **The Messenger handle.** `m.me/your-username` appears twice in `index.html` — replace it with your
+   page's real username, or delete both links if you would rather take everything by email.
+
+Contact is `gaerlanbong226@gmail.com`, shown on the enquiry notice, the footer, and the sign-in
+page. Two things worth knowing about publishing it: a plain address on a public page collects spam
+within weeks, and a personal Gmail reads differently from a business address to a client comparing
+consultants. Neither is a reason not to launch — but a forwarding address on your own domain later
+is cheap, and swapping it is one string in two files.
 
 The name and the software claims are settled: the wordmark reads **Inciong Statistical Consulting**
 (set as a two-line lockup so it fits a nav bar), `business_name` in `config/services.toml` matches it
