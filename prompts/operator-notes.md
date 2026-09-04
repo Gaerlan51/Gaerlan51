@@ -129,7 +129,28 @@ Opening `web/index.html` straight off disk mostly works, but it is not what a vi
 `vercel.json`, so `/` and `/login` behave locally exactly as they will once deployed. Pass a port
 number if 8000 is busy. Ctrl-C stops it.
 
-### Deploying to Vercel
+### Going live (Cloudflare Pages)
+
+Free, and its free tier permits commercial use — which Vercel's Hobby tier does not, and this is a
+business site. Nothing to install; it builds from GitHub.
+
+1. **dash.cloudflare.com** → create a free account.
+2. **Compute (Workers & Pages)** → **Create** → **Pages** → **Connect to Git**.
+3. Authorise GitHub and pick **Gaerlan51/Gaerlan51**.
+4. Build settings — the only screen that matters:
+   - Framework preset: **None**
+   - Build command: **leave empty**
+   - Build output directory: **web**
+   - Production branch: **main**
+5. **Save and Deploy.** About a minute later you have `<project>.pages.dev`.
+
+Every push to `main` redeploys by itself. `web/_headers` sets the security headers there;
+`vercel.json` does the same job if you ever move to Vercel. Clean URLs (`/login`) work on both.
+
+A custom domain, when you buy one, goes under the project's **Custom domains** tab — Cloudflare
+issues the certificate.
+
+### Deploying to Vercel (alternative)
 
 `vercel.json` in the repo root already points Vercel at `web/`, so there is nothing to configure:
 
