@@ -97,6 +97,27 @@ A blank in a document you send a client is worse than a command that won't run.
 static host and it works as-is. `python3 scripts/build-site.py` optionally flattens each page into a
 single self-contained file in `web/dist/` if your host prefers that.
 
+### Getting it onto your computer
+
+Everything lives at <https://github.com/Gaerlan51/Gaerlan51>. Two ways down:
+
+**With git** (keeps you able to pull later changes):
+
+```sh
+git clone https://github.com/Gaerlan51/Gaerlan51.git
+cd Gaerlan51
+```
+
+**Without git** — on the repo page, **Code → Download ZIP**, then unzip it and open a terminal in
+that folder. Nothing here needs a build step, so the ZIP is complete as it stands.
+
+You need **Python 3.11 or newer** for the tracker toolkit (it reads the config with `tomllib`, added
+in 3.11). Check with `python3 --version`, or `python --version` on Windows. The website itself needs
+no Python at all — the four files in `web/` open in any browser.
+
+On macOS and Linux the toolkit runs as `./ops.sh status`. On Windows that shell script does not run;
+use `python -m ops status` instead — same program, same arguments.
+
 ### Running it on your own machine
 
 ```sh
