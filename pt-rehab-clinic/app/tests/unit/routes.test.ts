@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isPublicRoute } from '@/domain/routes';
+import { isPublicRoute, isSupabaseConfigured } from '@/domain/routes';
 
 describe('public route matching', () => {
   it('lets the marketing pages and sign-in through', () => {
@@ -26,5 +26,24 @@ describe('public route matching', () => {
     expect(isPublicRoute('/loginx')).toBe(false);
     expect(isPublicRoute('/contact/patients')).toBe(false);
     expect(isPublicRoute('/api/cronjobs')).toBe(false);
+  });
+});
+
+describe('deployment configuration check', () => {
+  it('accepts a real project URL and key', () => {
+    expect(isSupabaseConfigured('https://abcdefgh.supabase.co', 'eyJhbGciOi.real.key')).toBe(true);
+  });
+
+  it('rejects missing values', () => {
+    expect(isSupabaseConfigured(undefined, undefined)).toBe(false);
+    expect(isSupabaseConfigured('https://abcdefgh.supabase.co', '')).toBe(false);
+  });
+
+  it('rejects the placeholders from .env.example, so a fresh deploy says so', () => {
+    expect(isSupabaseConfigured('https://placeholder.supabase.co', 'placeholder')).toBe(false);
+  });
+
+  it('rejects a non-https URL', () => {
+    expect(isSupabaseConfigured('http://abcdefgh.supabase.co', 'key')).toBe(false);
   });
 });

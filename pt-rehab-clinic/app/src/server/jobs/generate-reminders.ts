@@ -9,6 +9,18 @@ import { appointmentWindow } from '@/domain/reminders';
  * runs on a schedule with no signed-in user, and must see all five branches.
  * It only ever writes drafts — approval and sending stay with staff.
  */
+/**
+ * Whether the scheduled job has what it needs to run.
+ *
+ * Lives here rather than in the route because src/server/jobs/ is the only
+ * place permitted to name the service-role key at all (spec §5) — the guard in
+ * scripts/guard-service-role.mjs fails the build otherwise, and the right
+ * answer to that is to move the code, not to widen the rule.
+ */
+export function isReminderJobConfigured(): boolean {
+  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.NEXT_PUBLIC_SUPABASE_URL);
+}
+
 export async function generateReminders(now = new Date()) {
   const supabase = createServiceRoleClient('scheduled reminder generation across all branches');
   const window = appointmentWindow(now);

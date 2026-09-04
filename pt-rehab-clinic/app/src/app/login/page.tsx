@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { Logo, IconEye, IconEyeOff, IconLock, IconShield, IconArrow } from '@/components/icons';
 import { site } from '@/lib/site';
+import { isSupabaseConfigured } from '@/domain/routes';
 
 const ASSURANCES = [
   'Access is limited by role and by branch',
@@ -14,6 +15,13 @@ const ASSURANCES = [
 
 export default function LoginPage() {
   const router = useRouter();
+  // NEXT_PUBLIC_ values are inlined at build time, so the page can tell on its
+  // own whether this deployment has a database — no query parameter needed,
+  // and no useSearchParams to force a Suspense boundary.
+  const configured = isSupabaseConfigured(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [reveal, setReveal] = useState(false);
@@ -94,6 +102,15 @@ export default function LoginPage() {
             Use the account your branch administrator issued you.
           </p>
 
+          {!configured && (
+            <p className="mt-6 rounded-lg border border-caution/30 bg-caution/5 px-3 py-2.5 text-sm leading-relaxed text-pretty">
+              This deployment has no database connected yet. Set{' '}
+              <code className="font-mono text-xs">NEXT_PUBLIC_SUPABASE_URL</code> and{' '}
+              <code className="font-mono text-xs">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, then
+              redeploy. The public site works without them.
+            </p>
+          )}
+
           <form onSubmit={onSubmit} className="mt-8 space-y-5" noValidate>
             <div>
               <label htmlFor="email" className="label">Work email</label>
@@ -141,7 +158,7 @@ export default function LoginPage() {
               )}
             </div>
 
-            <button type="submit" className="btn-primary w-full" disabled={busy}>
+            <button type="submit" className="btn-primary w-full" disabled={busy || !configured}>
               {busy ? 'Signing in…' : <>Sign in <IconArrow width={16} height={16} /></>}
             </button>
           </form>
