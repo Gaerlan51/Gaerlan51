@@ -1,6 +1,10 @@
 # Build spec — `ops`, the consulting practice toolkit
 
-**How to use this file:** open Claude Code in the repo root and say
+**Status: implemented.** The toolkit exists — `ops/`, `templates/`, `tests/`, `./ops.sh`. This file
+stays as the record of what was asked for and why, and as the reference for anyone changing it.
+Deviations from the spec as written are listed in §11.
+
+**How this file was used:** open Claude Code in the repo root and say
 *"Implement `specs/ops-toolkit-spec.md`."* This document is the prompt. It is written to be
 executed without follow-up questions; where a decision is genuinely open, it says so and names the
 default to take.
@@ -269,3 +273,26 @@ layer, no plugin system, no "future-proofing" today.
 
 Report at the end: what you built, anything in this spec that turned out wrong or underspecified, and
 what you'd cut if the owner only ever ran one command.
+
+---
+
+## 11. Deviations from the spec as built
+
+Recorded here rather than silently absorbed, so the spec and the code don't drift apart.
+
+- **Extra files in `ops/commands/`.** `_common.py` (shared loading and document-writing helpers) and
+  `setters.py` (`set-status` and `set`, which §5 specifies but §3's layout gave no home).
+- **`tests/test_cli.py` added.** Three items §8 requires — an unset price exiting non-zero, `--force`
+  overriding a transition, `ops status` on a missing tracker — are command-level behaviours, and the
+  five test files in §3 are all unit-level. 88 tests total.
+- **Global `--today YYYY-MM-DD` flag, not in the spec.** Date-dependent behaviour (rush detection,
+  overdue follow-ups, days outstanding) is otherwise untestable without pinning the system clock, and
+  it doubles as a way to preview next week's dashboard. History entries honour it too, so a
+  back-dated invoice dates its reminders correctly.
+- **Global `--history` and `--out-dir` flags** for the same reason: tests must not write to the real
+  `data/` or `out/`.
+- **`quote --commit` will not force an illegal status move.** §5 says it moves status to `quoted`; if
+  the client is already further along (say `delivered`), it prices the job, leaves the status alone,
+  and says so. Re-quoting late work is a real case; corrupting the pipeline for it isn't worth it.
+- **`[followups]` is absent from the committed `config/services.toml`.** The defaults in §6 apply
+  until the owner adds the section, which keeps the committed config free of numbers to maintain.
