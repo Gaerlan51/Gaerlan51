@@ -152,6 +152,23 @@ Locations card. It ignores `base_url` and uses whatever origin the dashboard is
 open on, so on the machine running the server that is `localhost` — a secure
 context, where geolocation works and the scan completes end to end.
 
+### Scanning from a phone before you deploy
+
+```sh
+./scripts/share.sh
+```
+
+This opens a Cloudflare quick tunnel — one binary, no account — points
+`DTR_BASE_URL` at the temporary `https://…trycloudflare.com` address it gives
+you, and starts the server there. The generated QR then points at a public
+HTTPS address, so a phone can scan it. Open `/admin/poster` and scan it off the
+monitor.
+
+The address is random and dies when you press Ctrl-C, and while it runs your
+machine is reachable from the internet. It is for trying the thing out, not for
+a poster on a wall — that needs a permanent address, which is what
+`./scripts/deploy-fly.sh` gives you.
+
 A third-party QR generator does not help here. The generated code is already
 valid and scannable; what is wrong is the address inside it, and any generator
 fed that address produces the same dead poster. A "dynamic QR" redirect service
