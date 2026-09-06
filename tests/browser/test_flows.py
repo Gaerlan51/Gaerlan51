@@ -111,7 +111,7 @@ class BrowserFlowTests(unittest.TestCase):
 
         scanned = self.scan_in_a_new_window(page)
         scanned.wait_for_selector("#view-result:not(.hidden)", timeout=15_000)
-        self.assertEqual(scanned.inner_text("#result-kind").strip(), "Timed in")
+        self.assertIn("Timed in", scanned.inner_text("#result-kind"))
         self.assertRegex(scanned.inner_text("#result-time").strip(), r"^\d{2}:\d{2}:\d{2}$")
         self.assertIn("Office", scanned.inner_text("#result-detail"))
 
@@ -131,7 +131,7 @@ class BrowserFlowTests(unittest.TestCase):
         # Same document, fragment only: no navigation, no reload.
         page.evaluate("url => { window.location.hash = new URL(url).hash; }", self.server.scan_url)
         page.wait_for_selector("#view-result:not(.hidden)", timeout=15_000)
-        self.assertEqual(page.inner_text("#result-kind").strip(), "Timed in")
+        self.assertIn("Timed in", page.inner_text("#result-kind"))
 
     def test_a_scan_from_off_site_is_refused_and_says_how_far(self):
         page = self.phone_at(latitude=OFFICE_LAT + 0.02)
@@ -188,11 +188,14 @@ class BrowserFlowTests(unittest.TestCase):
         desk.fill("#login-password", DEMO_PASSWORD)
         desk.click("#login-form button[type=submit]")
         desk.wait_for_selector("#view-main:not(.hidden)", timeout=15_000)
-        desk.wait_for_selector("#board-body tr", timeout=15_000)
+        desk.wait_for_selector("#board-grid .person", timeout=15_000)
 
-        board = desk.inner_text("#board-body")
+        # The visible presence grid...
+        board = desk.inner_text("#board-grid")
         self.assertIn("Tester 5", board)
-        self.assertIn("Clocked in", board)
+        # ...and the table that shadows it for a screen reader.
+        rows = desk.eval_on_selector_all("#board-body tr", "els => els.map(e => e.innerText)")
+        self.assertTrue(any("Tester 5" in row and "Clocked in" in row for row in rows))
 
     def test_the_dashboard_refuses_an_employee_password(self):
         desk = self.desktop()
@@ -250,7 +253,11 @@ class BrowserFlowTests(unittest.TestCase):
 
         page.wait_for_selector("#panel-requests:not(.hidden)", timeout=10_000)
         page.wait_for_timeout(600)
-        self.assertIn("pending", page.inner_text("#requests-list"))
+        listed = page.inner_text("#requests-list")
+        self.assertIn("battery died", listed)          # it is the request we filed
+        self.assertIn("Waiting", listed)                # and nobody has decided it yet
+        self.assertEqual(page.eval_on_selector_all(
+            "#requests-list .chip.warning", "els => els.length"), 1)
 
 
 if __name__ == "__main__":

@@ -6,7 +6,8 @@
  */
 
 const $ = (id) => document.getElementById(id);
-const state = { me: null, config: null, board: null, socket: null, poller: null, people: [], shifts: [] };
+const state = { me: null, config: null, board: null, report: null,
+                socket: null, poller: null, people: [], shifts: [] };
 
 /* Report times are rendered in the workplace's timezone, not the viewer's — an
  * HR laptop travelling with its owner must not shift everyone's hours. */
@@ -84,10 +85,42 @@ function wrapCell(node) {
 
 /* -------------------------------------------------------------- live board */
 
-const STATE_LABEL = {
-  in: "Clocked in", out: "Clocked out", not_in: "Not in yet",
-  late_missing: "Late, no scan", rest_day: "Rest day",
+/* Presence states. Each carries a glyph and a word: the colour is a second
+ * channel, never the only one — two of the status hues sit below 3:1 on a
+ * light surface and could not carry meaning alone. */
+const STATE = {
+  in:           { label: "Clocked in",   glyph: "\u25cf", tone: "good" },
+  out:          { label: "Clocked out",  glyph: "\u2713", tone: "" },
+  not_in:       { label: "Not in yet",   glyph: "\u25cb", tone: "" },
+  late_missing: { label: "Late, no scan", glyph: "\u26a0", tone: "critical" },
+  rest_day:     { label: "Rest day",     glyph: "\u2014", tone: "" },
 };
+
+/* Flag codes are how the server names a condition. They are not how a
+ * supervisor should have to read one. */
+const FLAG_LABELS = {
+  unrecognised_device: "Unrecognised phone",
+  edge_of_geofence: "At the edge of the geofence",
+  missing_time_out: "No time out",
+  improbably_long_shift: "Improbably long shift",
+  photo_missing: "Photo missing",
+};
+
+function describeFlag(code) {
+  return FLAG_LABELS[code] || code.replace(/_/g, " ");
+}
+
+function describeMinutes(total) {
+  const hours = Math.floor(total / 60);
+  const minutes = total % 60;
+  if (!hours) return `${minutes} min`;
+  return minutes ? `${hours}h ${minutes}m` : `${hours}h`;
+}
+
+function initials(name) {
+  const parts = String(name).trim().split(/\s+/);
+  return ((parts[0] || "")[0] || "" ) + ((parts[parts.length - 1] || "")[0] || "");
+}
 
 function renderBoard(board) {
   state.board = board;
@@ -95,64 +128,97 @@ function renderBoard(board) {
 
   const counts = $("counts");
   counts.replaceChildren();
+  const expected = board.counts.in + board.counts.out + board.counts.not_in + board.counts.late_missing;
   const tiles = [
-    ["in", "Clocked in", board.counts.in],
-    ["late", "Late, no scan", board.counts.late_missing],
-    ["", "Clocked out", board.counts.out],
-    ["", "Not in yet", board.counts.not_in],
-    ["flagged", "Needs a look", (board.anomalies || []).length],
+    ["good", "Clocked in", board.counts.in, `of ${expected} expected today`],
+    ["critical", "Late, no scan", board.counts.late_missing, "past their start time"],
+    ["", "Clocked out", board.counts.out, "finished for the day"],
+    ["warning", "Needs a look", (board.anomalies || []).length, "flagged, last 7 days"],
   ];
-  for (const [kind, label, value] of tiles) {
-    const tile = el("div", `count ${kind}`.trim());
-    tile.append(el("div", "n", value), el("div", "k", label));
+  for (const [tone, label, value, sub] of tiles) {
+    const tile = el("div", `count ${tone}`.trim());
+    tile.append(el("div", "n", value), el("div", "k", label), el("div", "tiny faint", sub));
     counts.append(tile);
   }
 
   const filter = ($("board-filter").value || "").toLowerCase();
+  const grid = $("board-grid");
   const body = $("board-body");
+  grid.replaceChildren();
   body.replaceChildren();
-  for (const person of board.people) {
-    if (filter && !`${person.name} ${person.department} ${person.employee_number}`.toLowerCase().includes(filter)) {
-      continue;
-    }
-    const row = el("tr");
-    const name = el("span", null, person.name);
-    const number = el("span", "muted tiny", ` ${person.employee_number}`);
-    const nameCell = el("span");
-    nameCell.append(name, number);
-    const stateCell = el("span");
-    stateCell.append(el("span", `state-dot state-${person.state}`), el("span", null, STATE_LABEL[person.state]));
-    cells(row, [
-      nameCell, person.department, person.shift,
-      person.time_in || "—", person.time_out || "—",
-      person.late_minutes ? `${person.late_minutes} min` : "—",
-      stateCell,
-    ]);
+
+  const shown = board.people.filter((person) => !filter
+    || `${person.name} ${person.department} ${person.employee_number}`.toLowerCase().includes(filter));
+
+  if (!shown.length) {
+    const empty = el("div", "empty");
+    empty.append(el("span", "glyph", "\u2205"),
+                 el("div", null, filter ? "Nobody matches that filter." : "No active employees yet."));
+    grid.append(empty);
+  }
+
+  for (const person of shown) {
+    const meta = STATE[person.state] || STATE.not_in;
+    const card = el("div", "person");
+    if (person.state === "in") card.classList.add("is-in");
+    if (person.state === "late_missing") card.classList.add("is-late");
+
+    card.append(el("div", "person-mark", initials(person.name).toUpperCase()));
+    const bodyCell = el("div", "person-body grow");
+    bodyCell.append(el("div", "person-name truncate", person.name));
+
+    const times = person.time_in
+      ? `${person.time_in} \u2192 ${person.time_out || "\u2026"}`
+      : meta.label;
+    const line = person.state === "late_missing" && person.late_minutes
+      ? `${meta.glyph} ${describeMinutes(person.late_minutes)} late`
+      : `${meta.glyph} ${times}`;
+    bodyCell.append(el("div", "person-meta truncate", line));
     if (person.flags.length) {
-      row.lastChild.append(" ", el("span", "pill warn", person.flags.join(" ")));
+      bodyCell.append(el("div", "person-flag chip warning",
+        person.flags.map(describeFlag).join(" \u00b7 ")));
     }
-    body.append(row);
+    card.append(bodyCell);
+    grid.append(card);
+
+    // The same rows, for a screen reader and for anyone who wants the detail.
+    body.append(cells(el("tr"), [
+      `${person.name} ${person.employee_number}`, person.department, person.shift,
+      person.time_in || "\u2014", person.time_out || "\u2014",
+      person.late_minutes ? describeMinutes(person.late_minutes) : "\u2014",
+      meta.label + (person.flags.length ? ` (${person.flags.map(describeFlag).join(", ")})` : ""),
+    ]));
   }
 
   const anomalies = $("anomalies");
   anomalies.replaceChildren();
   if (!(board.anomalies || []).length) {
-    anomalies.append(el("p", "muted small", "Nothing flagged. "));
+    const empty = el("div", "empty");
+    empty.append(el("span", "glyph", "\u2713"), el("div", null, "Nothing flagged."));
+    anomalies.append(empty);
   }
   for (const item of board.anomalies || []) {
-    const card = el("div", `anomaly ${item.reasons.includes("unrecognised_device") ? "bad" : ""}`.trim());
-    card.append(el("div", "who", `${item.employee} · ${item.employee_number}`));
-    card.append(el("div", "small",
+    const severe = item.reasons.includes("unrecognised_device");
+    const card = el("div", `anomaly ${severe ? "critical" : ""}`.trim());
+    card.append(el("div", "anomaly-glyph", severe ? "\u26a0" : "\u25cb"));
+    const bodyCell = el("div", "grow");
+    bodyCell.append(el("div", "who", `${item.employee} \u00b7 ${item.employee_number}`));
+    bodyCell.append(el("div", "tiny muted",
       `${item.entry_type.replace("_", " ")} on ${item.business_date} at ${item.at.slice(11)}`));
-    card.append(el("div", "tiny muted", item.reasons.join(", ")
-      + (item.distance_m !== null ? ` · ${item.distance_m} m out` : "")));
+    const detail = [item.reasons.map(describeFlag).join(", ")];
+    // A distance is only worth the space when it is actually unusual.
+    if (item.distance_m !== null && item.distance_m >= 1) {
+      detail.push(`${Math.round(item.distance_m)} m from the marker`);
+    }
+    bodyCell.append(el("div", "tiny faint", detail.filter(Boolean).join(" \u00b7 ")));
     if (item.has_photo) {
       const link = el("a", "tiny", "View photo");
       link.href = `/api/admin/logs/${item.log_id}/photo`;
       link.target = "_blank";
       link.rel = "noopener";
-      card.append(link);
+      bodyCell.append(link);
     }
+    card.append(bodyCell);
     anomalies.append(card);
   }
 }
@@ -215,12 +281,18 @@ async function loadApprovals() {
   const container = $("approvals");
   container.replaceChildren();
   if (!rows.length) {
-    container.append(el("p", "muted small", "Nothing waiting."));
+    const empty = el("div", "empty");
+    empty.append(el("span", "glyph", "\u2713"), el("div", null, "Nothing waiting for review."));
+    container.append(empty);
     return;
   }
   for (const row of rows) {
     const card = el("div", "request");
-    card.append(el("div", null, `${row.employee} · ${row.employee_number} · ${row.department}`));
+    const head = el("div", "request-head");
+    head.append(el("span", "request-who", row.employee),
+                el("span", "chip", `${row.employee_number} · ${row.department}`));
+    card.append(head);
+
     const kind = String(row.requested_entry_type || "").replace("_", " ");
     const asked = String(row.requested_at || "").slice(11) || row.requested_at;
     const what = row.type === "void"
@@ -228,13 +300,17 @@ async function loadApprovals() {
       : row.type === "amend"
         ? `Change the ${kind} on ${row.business_date} to ${asked}`
         : `Add a missing ${kind} on ${row.business_date} at ${asked}`;
-    card.append(el("div", "small", what));
-    if (row.original) card.append(el("div", "tiny muted", `Original: ${row.original.entry_type} at ${row.original.at}`));
-    card.append(el("div", "reason small", `“${row.reason}”`));
+    card.append(el("div", "ask", what));
+    if (row.original) {
+      card.append(el("div", "tiny faint",
+        `Currently: ${row.original.entry_type.replace("_", " ")} at ${row.original.at}`));
+    }
+    card.append(el("div", "reason", row.reason));
 
     const actions = el("div", "actions");
     const note = el("input");
     note.placeholder = "Note (required to reject)";
+    note.setAttribute("aria-label", `Review note for ${row.employee}`);
     const approve = el("button", "primary", "Approve");
     const reject = el("button", "danger", "Reject");
     approve.addEventListener("click", async () => {
@@ -284,24 +360,90 @@ function reportQuery() {
 
 async function runReport() {
   const data = await api(`/api/admin/report?${reportQuery()}`);
+  state.report = data;
+
+  // Lead with the period's shape; the per-employee table answers "who", and the
+  // day-by-day wall stays folded away until somebody actually wants a day.
+  const worked = data.rows.filter((r) => r.time_in);
+  const hours = data.totals.reduce((sum, t) => sum + t.worked_hours, 0);
+  const summary = $("rep-summary");
+  summary.replaceChildren();
+  const tiles = [
+    ["", "Hours worked", hours.toFixed(1), `${data.start} to ${data.end}`],
+    ["", "People", String(data.totals.length), "in this view"],
+    ["warning", "Late arrivals", String(worked.filter((r) => r.late_minutes > 0).length), "days started late"],
+    ["critical", "Open days", String(data.rows.filter((r) => r.status === "incomplete").length),
+     "clocked in, never out"],
+  ];
+  for (const [tone, label, value, sub] of tiles) {
+    const tile = el("div", `count ${tone}`.trim());
+    tile.append(el("div", "n", value), el("div", "k", label), el("div", "tiny faint", sub));
+    summary.append(tile);
+  }
+
+  const mostHours = Math.max(1, ...data.totals.map((t) => t.worked_hours));
   const totals = $("rep-totals");
   totals.replaceChildren();
   for (const t of data.totals) {
-    totals.append(cells(el("tr"), [
-      t.name, t.department, t.worked_hours, t.days_present, t.days_absent,
-      t.days_incomplete, t.late_minutes, t.undertime_minutes, t.overtime_minutes,
-    ]));
+    const share = el("div", "share");
+    const bar = el("div", "meter");
+    const fill = document.createElement("span");
+    fill.style.width = `${Math.round((t.worked_hours / mostHours) * 100)}%`;
+    bar.append(fill);
+    share.append(bar);
+    const row = cells(el("tr"), [t.name, t.department]);
+    row.append(numCell(t.worked_hours.toFixed(2)));
+    row.append(wrapCell(share));
+    for (const value of [t.days_present, t.days_absent, t.days_incomplete]) {
+      row.append(numCell(value || "—"));
+    }
+    // Durations as durations. "6720" is a number; "112h" is an answer.
+    for (const minutes of [t.late_minutes, t.undertime_minutes, t.overtime_minutes]) {
+      row.append(numCell(minutes ? describeMinutes(minutes) : "—"));
+    }
+    totals.append(row);
   }
+
+  renderReportRows();
+  banner(`${data.rows.length} employee-days, ${data.start} to ${data.end}.`, "ok");
+}
+
+function numCell(value) {
+  const td = el("td", "num", value);
+  return td;
+}
+
+function renderReportRows() {
+  const data = state.report;
+  if (!data) return;
+  const workedOnly = $("rep-worked-only").checked;
   const rows = $("rep-rows");
   rows.replaceChildren();
-  for (const r of data.rows) {
-    if (r.status === "rest_day" && !r.time_in) continue;
-    rows.append(cells(el("tr"), [
-      r.date, r.name, atWorkplace(r.time_in), atWorkplace(r.time_out), r.worked_hours,
-      r.late_minutes || "—", r.status, r.flags.join(" ") || "—",
-    ]));
+  const shown = data.rows.filter((r) => (workedOnly ? r.time_in : r.status !== "rest_day"));
+  for (const r of shown) {
+    const row = cells(el("tr"), [r.date, r.name, atWorkplace(r.time_in), atWorkplace(r.time_out)]);
+    row.append(numCell(r.worked_hours.toFixed(2)));
+    row.append(numCell(r.late_minutes ? describeMinutes(r.late_minutes) : "—"));
+    row.append(wrapCell(dayStatusChip(r)));
+    row.append(el("td", "tiny muted", r.flags.map(describeFlag).join(", ") || "—"));
+    rows.append(row);
   }
-  banner(`${data.rows.length} employee-days, ${data.start} to ${data.end}.`, "ok");
+  $("rep-rowcount").textContent = `${shown.length} of ${data.rows.length} rows`;
+}
+
+const DAY_TONE = {
+  present: ["good", "\u2713"], late: ["warning", "\u26a0"],
+  absent: ["critical", "\u2715"], incomplete: ["critical", "\u26a0"],
+  unscheduled: ["", "\u25cb"], rest_day: ["", "\u2014"],
+};
+
+function dayStatusChip(row) {
+  const [tone, mark] = DAY_TONE[row.status] || ["", "\u25cb"];
+  const chip = el("span", `chip ${tone}`.trim());
+  const glyph = el("span", "glyph", mark);
+  glyph.setAttribute("aria-hidden", "true");
+  chip.append(glyph, document.createTextNode(row.status.replace("_", " ")));
+  return chip;
 }
 
 /* ------------------------------------------------------------------ people */
@@ -438,16 +580,47 @@ async function loadAudit() {
   const rows = await api(`/api/admin/audit?limit=300${type ? `&entity_type=${type}` : ""}`);
   const body = $("audit-body");
   body.replaceChildren();
+  if (!rows.length) {
+    const cell = el("td", "empty", "Nothing recorded for that filter yet.");
+    cell.colSpan = 7;
+    const empty = el("tr");
+    empty.append(cell);
+    body.append(empty);
+    return;
+  }
   for (const row of rows) {
     const tr = el("tr");
-    const before = el("div", "audit-value mono tiny", row.old_value || "");
-    const after = el("div", "audit-value mono tiny", row.new_value || "");
     cells(tr, [
       row.at.slice(0, 19).replace("T", " "), row.actor || "—",
-      `${row.entity_type} ${row.entity_id}`, row.action, before, after, row.reason || "",
+      `${row.entity_type} ${row.entity_id}`, row.action,
     ]);
+    tr.append(wrapCell(readableValue(row.old_value)), wrapCell(readableValue(row.new_value)));
+    tr.append(el("td", "tiny muted", row.reason || ""));
     body.append(tr);
   }
+}
+
+/* A JSON blob in a table cell is technically the whole truth and practically
+ * unreadable. Same fields, one per line, keys quiet. */
+function readableValue(raw) {
+  const holder = el("div", "audit-diff audit-value");
+  if (!raw) {
+    holder.textContent = "—";
+    return holder;
+  }
+  let parsed;
+  try { parsed = JSON.parse(raw); } catch (err) { holder.textContent = raw; return holder; }
+  if (parsed === null || typeof parsed !== "object") {
+    holder.textContent = String(parsed);
+    return holder;
+  }
+  for (const [key, value] of Object.entries(parsed)) {
+    const line = el("span");
+    line.append(el("span", "audit-key", `${key}: `),
+                document.createTextNode(Array.isArray(value) ? value.join(" ") : String(value)));
+    holder.append(line);
+  }
+  return holder;
 }
 
 /* -------------------------------------------------------------- navigation */
@@ -554,6 +727,7 @@ $("board-filter").addEventListener("input", () => { if (state.board) renderBoard
 $("rep-run").addEventListener("click", () => runReport().catch((e) => banner(e.message, "bad")));
 $("rep-csv").addEventListener("click", () => { location.href = `/api/admin/report.csv?${reportQuery()}`; });
 $("au-run").addEventListener("click", () => loadAudit().catch((e) => banner(e.message, "bad")));
+$("rep-worked-only").addEventListener("change", renderReportRows);
 
 $("person-form").addEventListener("submit", async (event) => {
   event.preventDefault();

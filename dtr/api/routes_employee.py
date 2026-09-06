@@ -9,7 +9,7 @@ from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile, s
 from .. import DtrError, consent as consent_text, corrections, store
 from ..geo import Fix
 from ..scan import MAX_PHOTO_BYTES, ScanRequest, register_scan
-from ..timerules import business_date
+from ..timerules import business_date, shift_start_local
 from . import deps
 
 router = APIRouter(prefix="/api", tags=["employee"])
@@ -96,15 +96,34 @@ async def scan(
 
 @router.get("/my/status")
 def my_status(request: Request, employee=deps.EmployeeDep) -> dict:
+    """Enough for the app to say where you stand, not just whether you are in."""
     settings = deps.get_settings(request)
     conn = deps.get_conn(request)
     open_row = store.open_entry(conn, employee["id"])
     last = store.last_log(conn, employee["id"])
+    shift = store.shift_for(conn, employee)
+    today = business_date(store.now_utc(), settings.tz, shift)
+
+    late_minutes = 0
+    if open_row is not None and shift.is_workday(today):
+        due = shift_start_local(today, shift, settings.tz) + timedelta(minutes=shift.grace_minutes)
+        started = store.parse_iso(open_row["recorded_at"])
+        late_minutes = max(0, int((started - due).total_seconds() // 60))
+
     return {
         "clocked_in": open_row is not None,
         "next_action": "time_out" if open_row is not None else "time_in",
         "since": store.parse_iso(open_row["recorded_at"]).astimezone(settings.tz).isoformat()
         if open_row else None,
+        "late_minutes": late_minutes,
+        "business_date": today.isoformat(),
+        "scheduled_today": shift.is_workday(today),
+        "shift": {
+            "name": shift.name,
+            "start_time": shift.start_time.strftime("%H:%M"),
+            "end_time": shift.end_time.strftime("%H:%M"),
+            "required_minutes": shift.required_minutes,
+        },
         "last_scan": {
             "entry_type": last["entry_type"],
             "at": store.parse_iso(last["recorded_at"]).astimezone(settings.tz).strftime("%Y-%m-%d %H:%M"),

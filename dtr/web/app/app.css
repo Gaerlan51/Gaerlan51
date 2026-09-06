@@ -1,42 +1,212 @@
-/* Employee PWA. Thumb-first: the scan button is the biggest thing on screen. */
+/* Employee app.
+ *
+ * Thumb-first. The two things that matter on this screen are "am I in?" and
+ * "scan" — everything else is secondary and looks it. Navigation sits at the
+ * bottom, within reach, rather than at the top where a phone is hardest to hit.
+ */
 
-body { padding-bottom: env(safe-area-inset-bottom); }
+body { background: var(--bg); }
 
-.shell { max-width: 30rem; margin: 0 auto; padding: 1rem 1rem 4rem; }
+.shell {
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: var(--s-4) var(--s-4) calc(5.5rem + env(safe-area-inset-bottom));
+  min-height: 100vh;
+}
 
-.masthead { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; margin-bottom: 1rem; }
-.masthead .who { font-weight: 700; }
+/* Gate screens: sign in, password, consent ------------------------------ */
+.gate { padding-top: var(--s-6); }
+.gate h1 { margin-bottom: var(--s-1); }
+.gate-mark { display: flex; justify-content: center; margin-bottom: var(--s-4); }
+.gate-mark img { width: 3.5rem; height: 3.5rem; border-radius: var(--r-lg); box-shadow: var(--e-2); }
+.block { width: 100%; }
 
-.clock { font-size: 2.6rem; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.state-line { font-size: 1rem; }
+.notice-body {
+  white-space: pre-wrap;
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  max-height: 46vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--surface-sunk);
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+}
 
+/* App bar --------------------------------------------------------------- */
+.app-bar {
+  display: flex; align-items: center; gap: var(--s-2);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-4);
+  border-bottom: 1px solid var(--line);
+}
+.app-bar-name { font-weight: 650; font-size: var(--t-md); }
+.app-bar-sub { margin-top: -2px; }
+
+/* Status card — the hero ------------------------------------------------- */
+.status-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  box-shadow: var(--e-2);
+  padding: var(--s-5) var(--s-4);
+  margin-bottom: var(--s-4);
+  text-align: center;
+}
+.status-card.is-in { border-color: color-mix(in srgb, var(--good) 35%, var(--line)); }
+.status-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--s-4); }
+.status-figure {
+  font-size: var(--t-hero);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+/* The h and m are labels on the number, not part of it: smaller, quieter, and
+   with room after them so "3h 24m" does not read as one long numeral. */
+.status-figure .unit {
+  font-size: .34em;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin: 0 .28em 0 .04em;
+  letter-spacing: 0;
+}
+.status-figure .unit:last-child { margin-right: 0; }
+.status-line { margin-top: var(--s-2); color: var(--ink-soft); }
+.status-meter { margin-top: var(--s-4); text-align: left; }
+.status-meter .tiny { margin-top: var(--s-1); }
+
+/* The Now panel puts its state at the top and its action at the bottom, where
+   a thumb actually reaches. dvh rather than vh so mobile browser chrome does
+   not push the button under the fold. */
+#panel-now {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 13rem);
+  min-height: calc(100dvh - 13rem);
+}
+#panel-now #scan-button { margin-top: auto; }
+
+/* Scan button ------------------------------------------------------------ */
 .scan-button {
-  display: block;
   width: 100%;
-  padding: 1.4rem 1rem;
-  font-size: 1.15rem;
-  border-radius: 16px;
+  min-height: 4.25rem;
+  padding: var(--s-4);
+  font-size: var(--t-md);
+  font-weight: 650;
+  border-radius: var(--r-xl);
+  border: none;
   background: var(--accent);
   color: var(--accent-ink);
-  border: none;
+  box-shadow: var(--e-2);
+  gap: var(--s-3);
 }
-.scan-button.out { background: var(--bad); color: #fff; }
-
-.result-time { font-size: 2.2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-
-.tabs { display: flex; gap: .25rem; margin-bottom: 1rem; border-bottom: 1px solid var(--line); }
-.tabs button {
-  border: none; background: none; border-radius: 0; padding: .6rem .7rem;
-  border-bottom: 2px solid transparent; color: var(--ink-soft); font-size: .9rem;
+.scan-button:hover:not(:disabled) { background: var(--accent-hover); }
+/* Clocking out is just as much the one action on this screen as clocking in,
+   so it stays a solid, high-contrast button — a different colour, not a
+   quieter one. The dark override belongs inside the media query; without the
+   nesting it applied in light mode too and greyed the button out. */
+.scan-button.out { background: var(--n-800); color: var(--n-0); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .scan-button.out { background: var(--n-100); color: var(--n-900); }
 }
-.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.scan-button:disabled { opacity: 1; background: var(--surface-sunk); color: var(--ink-soft); box-shadow: none; }
+.scan-icon { display: inline-flex; }
+.scan-hint { margin-top: var(--s-3); }
 
-.day { display: flex; justify-content: space-between; gap: .5rem; padding: .55rem 0; border-bottom: 1px solid var(--line); }
+.code-input { text-align: center; font-size: var(--t-md); letter-spacing: .1em; }
+
+/* Camera ----------------------------------------------------------------- */
+.camera-frame { position: relative; border-radius: var(--r-lg); overflow: hidden; background: #000; }
+#camera-preview { width: 100%; display: block; aspect-ratio: 3 / 4; object-fit: cover; }
+.camera-reticle {
+  position: absolute; inset: 18% 12%;
+  border: 2px solid rgba(255, 255, 255, .85);
+  border-radius: var(--r-md);
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .35);
+}
+
+/* Week summary ------------------------------------------------------------ */
+.summary-strip { margin-bottom: var(--s-4); }
+.summary-caption { text-transform: uppercase; letter-spacing: .06em; font-weight: 700; margin-bottom: var(--s-2); }
+.summary-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-2); }
+.summary-tile {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s-3);
+  text-align: center;
+}
+.summary-tile .n { font-size: var(--t-lg); font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.summary-tile .k { font-size: var(--t-xs); color: var(--ink-soft); margin-top: 2px; }
+
+/* Day rows ---------------------------------------------------------------- */
+.day {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s-1) var(--s-3);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+}
 .day:last-child { border-bottom: none; }
-.day .when { font-weight: 600; }
-.day .times { font-variant-numeric: tabular-nums; }
+.day-when { font-weight: 600; }
+.day-dow { color: var(--ink-faint); font-weight: 500; margin-left: var(--s-1); }
+.day-times { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.day-hours { font-size: var(--t-xs); color: var(--ink-soft); text-align: right; }
+.day-meta { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--s-2); }
+.day-meta .meter { flex: 1 1 auto; }
 
-.notice-body { white-space: pre-wrap; font-size: .88rem; max-height: 45vh; overflow-y: auto;
-               background: var(--surface-2); padding: .8rem; border-radius: 10px; }
+/* Request rows ------------------------------------------------------------ */
+.request-row {
+  display: flex; justify-content: space-between; gap: var(--s-3);
+  padding: var(--s-3) 0; border-bottom: 1px solid var(--line);
+}
+.request-row:last-child { border-bottom: none; }
 
-#camera-preview { width: 100%; border-radius: 12px; background: #000; aspect-ratio: 3 / 4; object-fit: cover; }
+/* Bottom tab bar ---------------------------------------------------------- */
+.tabbar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 10;
+}
+.tabbar button {
+  flex-direction: column;
+  gap: 2px;
+  border: none;
+  background: none;
+  border-radius: 0;
+  min-height: 3.5rem;
+  padding: var(--s-2) var(--s-1);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+.tabbar button:hover { background: none; color: var(--ink-soft); }
+.tabbar button[aria-selected="true"] { color: var(--accent); }
+.tab-glyph { display: inline-flex; }
+
+/* Result ------------------------------------------------------------------ */
+.result {
+  text-align: center;
+  padding: var(--s-7) var(--s-4) var(--s-5);
+  display: flex; flex-direction: column; align-items: center; gap: var(--s-3);
+}
+.result-mark {
+  width: 4.5rem; height: 4.5rem; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--good-wash); color: var(--good-ink);
+  animation: pop 320ms var(--ease);
+}
+.result-mark.out { background: var(--accent-wash); color: var(--accent); }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.result-time { font-size: var(--t-3xl); font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+.result-notes { width: 100%; margin-top: var(--s-2); }
+.result-notes .notice { margin-bottom: 0; text-align: left; }
+.result #result-done { margin-top: var(--s-4); }

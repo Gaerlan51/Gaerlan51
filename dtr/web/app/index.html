@@ -12,30 +12,34 @@
 <link rel="stylesheet" href="/static/app/app.css">
 </head>
 <body>
-<main class="shell">
 
+<main class="shell">
   <div id="banner" class="notice hidden" role="status" aria-live="polite"></div>
 
   <!-- Sign in ------------------------------------------------------------ -->
-  <section id="view-login" class="hidden">
+  <section id="view-login" class="hidden gate">
+    <div class="gate-mark" aria-hidden="true">
+      <img src="/static/app/icons/icon-192.png" alt="">
+    </div>
     <h1 id="org-name">Time Record</h1>
     <p class="muted small">Sign in to clock in and out.</p>
     <form id="login-form" class="card stack">
       <div>
         <label for="login-number">Employee number</label>
         <input id="login-number" name="employee_number" autocomplete="username"
-               autocapitalize="characters" required>
+               autocapitalize="characters" inputmode="numeric" required>
       </div>
       <div>
         <label for="login-password">Password</label>
         <input id="login-password" name="password" type="password" autocomplete="current-password" required>
       </div>
-      <button class="primary" type="submit">Sign in</button>
+      <button class="primary block" type="submit">Sign in</button>
     </form>
+    <p class="tiny faint center">Ask HR if you do not have a number yet.</p>
   </section>
 
-  <!-- Choose your own password --------------------------------------------- -->
-  <section id="view-password" class="hidden">
+  <!-- Choose your own password -------------------------------------------- -->
+  <section id="view-password" class="hidden gate">
     <h1>Choose your own password</h1>
     <p class="muted small">Someone handed you the one you just used, so it is not yet
       yours. Pick one only you know before you clock in.</p>
@@ -52,71 +56,96 @@
         <label for="pw-again">Type it again</label>
         <input id="pw-again" type="password" autocomplete="new-password" minlength="8" required>
       </div>
-      <p class="muted tiny">At least 8 characters. You will be signed out and asked to
+      <p class="tiny muted">At least 8 characters. You will be signed out and asked to
         sign in again with the new one.</p>
-      <button class="primary" type="submit">Save it</button>
+      <button class="primary block" type="submit">Save it</button>
     </form>
   </section>
 
-  <!-- Consent ------------------------------------------------------------ -->
-  <section id="view-consent" class="hidden">
+  <!-- Consent -------------------------------------------------------------- -->
+  <section id="view-consent" class="hidden gate">
     <h1 id="consent-title">Location notice</h1>
     <div class="card stack">
-      <div id="consent-body" class="notice-body"></div>
-      <button id="consent-accept" class="primary" type="button">I have read this and I agree</button>
-      <button id="consent-decline" class="link" type="button">Not now</button>
+      <div id="consent-body" class="notice-body" tabindex="0"></div>
+      <button id="consent-accept" class="primary block" type="button">I have read this and I agree</button>
+      <button id="consent-decline" class="ghost block" type="button">Not now</button>
     </div>
   </section>
 
-  <!-- Home --------------------------------------------------------------- -->
+  <!-- Home ----------------------------------------------------------------- -->
   <section id="view-home" class="hidden">
-    <header class="masthead">
-      <span class="who" id="home-name"></span>
-      <button id="sign-out" class="link" type="button">Sign out</button>
+    <header class="app-bar">
+      <div class="grow truncate">
+        <div class="app-bar-name" id="home-name"></div>
+        <div class="app-bar-sub tiny faint" id="home-shift"></div>
+      </div>
+      <button id="sign-out" class="ghost small" type="button">Sign out</button>
     </header>
 
-    <div class="tabs" role="tablist">
-      <button id="tab-now" role="tab" aria-selected="true" type="button">Now</button>
-      <button id="tab-history" role="tab" aria-selected="false" type="button">My record</button>
-      <button id="tab-requests" role="tab" aria-selected="false" type="button">Requests</button>
-    </div>
-
     <!-- Now -->
-    <div id="panel-now">
-      <div class="card center stack">
-        <div class="clock" id="wall-clock">--:--</div>
-        <div class="state-line" id="state-line">Checking…</div>
+    <div id="panel-now" class="panel">
+      <div class="status-card" id="status-card">
+        <div class="status-top">
+          <span class="chip" id="status-chip"><span class="glyph" aria-hidden="true">•</span><span id="status-word">Checking</span></span>
+          <span class="tiny faint" id="status-date"></span>
+        </div>
+        <div class="status-figure" id="status-figure">
+          <span class="nums" id="wall-clock">--:--</span>
+        </div>
+        <div class="status-line small" id="state-line">Checking…</div>
+        <div class="status-meter hidden" id="status-meter">
+          <div class="meter"><span id="status-meter-fill"></span></div>
+          <div class="tiny faint" id="status-meter-label"></div>
+        </div>
       </div>
-      <button id="scan-button" class="scan-button" type="button">Scan to clock in</button>
-      <p class="muted small center" id="scan-hint">
-        Point your phone's camera at the poster at the entrance, or press the button above.
+
+      <button id="scan-button" class="scan-button" type="button">
+        <span class="scan-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/>
+            <path d="M7 12h10"/>
+          </svg>
+        </span>
+        <span id="scan-label">Scan to clock in</span>
+      </button>
+      <p class="muted tiny center scan-hint" id="scan-hint">
+        Point your phone camera at the poster by the door, or tap the button.
       </p>
+
       <div id="manual-box" class="card hidden stack">
         <div>
           <label for="manual-code">Location code</label>
-          <input id="manual-code" class="mono" placeholder="ABCD-EFGH-JKLM"
+          <input id="manual-code" class="mono code-input" placeholder="ABCD-EFGH-JKLM"
                  autocapitalize="characters" autocomplete="off" spellcheck="false">
         </div>
         <p class="muted tiny">It is printed under the QR code on the poster.</p>
-        <button id="manual-submit" class="primary" type="button">Use this code</button>
+        <button id="manual-submit" class="primary block" type="button">Use this code</button>
       </div>
+
       <div id="camera-box" class="card hidden stack">
-        <video id="camera-preview" playsinline muted></video>
-        <p class="muted tiny" id="camera-hint">Hold the QR code inside the frame.</p>
-        <button id="camera-cancel" type="button">Cancel</button>
+        <div class="camera-frame">
+          <video id="camera-preview" playsinline muted></video>
+          <div class="camera-reticle" aria-hidden="true"></div>
+        </div>
+        <p class="muted tiny center" id="camera-hint">Hold the QR code inside the frame.</p>
+        <button id="camera-cancel" class="block" type="button">Cancel</button>
       </div>
     </div>
 
-    <!-- History -->
-    <div id="panel-history" class="hidden">
+    <!-- My record -->
+    <div id="panel-history" class="panel hidden">
+      <div class="summary-strip" id="week-summary"></div>
       <div class="card">
-        <h2>Last 30 days</h2>
-        <p class="muted tiny">You can read this record but not change it. If something is
-          wrong, ask for a correction and a supervisor will review it.</p>
+        <div class="card-head">
+          <h2>Last 30 days</h2>
+        </div>
+        <p class="muted tiny">You can read this but not change it. If something is wrong,
+          ask for a correction below and a supervisor will review it.</p>
         <div id="history-list"></div>
       </div>
       <div class="card stack">
-        <h2>Ask for a correction</h2>
+        <div class="card-head"><h2>Ask for a correction</h2></div>
         <form id="correction-form" class="stack">
           <div>
             <label for="corr-date">Which day</label>
@@ -150,32 +179,63 @@
             <textarea id="corr-reason" minlength="10" maxlength="500" required
                       placeholder="e.g. My phone was flat when I left, so my time out was never recorded."></textarea>
           </div>
-          <button class="primary" type="submit">Send request</button>
+          <button class="primary block" type="submit">Send request</button>
         </form>
       </div>
     </div>
 
     <!-- Requests -->
-    <div id="panel-requests" class="hidden">
+    <div id="panel-requests" class="panel hidden">
       <div class="card">
-        <h2>My correction requests</h2>
+        <div class="card-head"><h2>My correction requests</h2></div>
         <div id="requests-list"></div>
       </div>
     </div>
+
+    <nav class="tabbar" role="tablist" aria-label="Sections">
+      <button id="tab-now" role="tab" aria-selected="true" type="button">
+        <span class="tab-glyph" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </span>
+        <span>Now</span>
+      </button>
+      <button id="tab-history" role="tab" aria-selected="false" type="button">
+        <span class="tab-glyph" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        </span>
+        <span>My record</span>
+      </button>
+      <button id="tab-requests" role="tab" aria-selected="false" type="button">
+        <span class="tab-glyph" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l8 4v5c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg>
+        </span>
+        <span>Requests</span>
+      </button>
+    </nav>
   </section>
 
-  <!-- Scan result -------------------------------------------------------- -->
+  <!-- Scan result ----------------------------------------------------------- -->
   <section id="view-result" class="hidden">
-    <div class="card center stack">
-      <div class="pill" id="result-kind">Recorded</div>
-      <div class="result-time" id="result-time"></div>
-      <div id="result-detail" class="muted small"></div>
-      <div id="result-notes" class="stack small"></div>
-      <button id="result-done" class="primary" type="button">Done</button>
+    <div class="result">
+      <div class="result-mark" id="result-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12.5l5.5 5.5L20 7"/>
+        </svg>
+      </div>
+      <div class="chip good" id="result-kind"><span class="glyph" aria-hidden="true">✓</span>Recorded</div>
+      <div class="result-time nums" id="result-time"></div>
+      <div class="muted small" id="result-detail"></div>
+      <div id="result-notes" class="stack result-notes"></div>
+      <button id="result-done" class="primary block" type="button">Done</button>
     </div>
   </section>
-
 </main>
+
 <script src="/static/app/app.js" type="module"></script>
 </body>
 </html>

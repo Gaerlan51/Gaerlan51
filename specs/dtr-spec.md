@@ -178,6 +178,26 @@ dtr/
   web/admin      the dashboard
 ```
 
+### Interface
+
+Both front-ends share `dtr/web/shared/base.css`, which carries the tokens: a neutral ramp,
+a type scale, spacing, elevation, motion (zeroed under `prefers-reduced-motion`) and a fixed
+status palette. The status colours are the validated set, and two of them sit below 3:1 on a
+light surface — so a status colour never carries meaning alone. Every state ships as a glyph
+plus a word, with the label in an ink token rather than the status hue. That pairing is the
+accessibility mechanism, not decoration.
+
+The employee app is built thumb-first: state at the top of the screen, the one action anchored
+at the bottom where a phone is actually held, navigation in a bottom bar. The dashboard's live
+view is a presence grid rather than a table, because it is meant to be read across a room; a
+visually-hidden table shadows it so the same information reaches a screen reader. Reports stay
+tabular, since that is what payroll reads, but lead with the period's shape and keep the
+day-by-day wall folded away.
+
+Durations are rendered as durations (`7h 14m`, not `434`), and flag codes are translated
+(`Unrecognised phone`, not `unrecognised_device`) everywhere a person reads them. The CSV keeps
+raw minutes, because that is what a payroll formula wants.
+
 Business rules live in the plain modules and are tested without the web layer; `dtr/api/` only
 translates HTTP. `tests/dtr/test_api.py` skips itself if FastAPI is not installed, so the core suite
 runs on a bare Python 3.11.
