@@ -79,14 +79,24 @@ The app is one process with one SQLite file, so it wants a container host with
 a persistent disk. `Dockerfile`, `fly.toml` and `render.yaml` are in the repo
 root.
 
-On Fly.io:
+On Fly.io, after `fly auth login`:
+
+```sh
+./scripts/deploy-fly.sh my-company-dtr
+```
+
+That creates the app, the volume and the signing key, deploys, and prints the
+URL. Re-run it to ship a change; it never overwrites a signing key that already
+exists, because doing so would invalidate every poster on a wall.
+
+The same steps by hand:
 
 ```sh
 fly launch --no-deploy          # rewrites app and region in fly.toml
 fly volumes create dtr_data --size 1 --region sin
 fly secrets set DTR_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
-fly deploy
-fly secrets set DTR_BASE_URL="https://<your-app>.fly.dev"   # then it redeploys
+fly secrets set DTR_BASE_URL="https://<your-app>.fly.dev"
+fly deploy --ha=false           # --ha=false keeps it to one machine
 fly ssh console -C "python -m dtr admin 1001 'Your Name'"
 ```
 
