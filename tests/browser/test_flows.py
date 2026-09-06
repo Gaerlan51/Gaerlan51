@@ -234,6 +234,36 @@ class BrowserFlowTests(unittest.TestCase):
         options = desk.eval_on_selector_all("#p-shift option", "els => els.map(e => e.textContent)")
         self.assertTrue(any("Weekend cover" in text for text in options))
 
+    def test_the_poster_is_a_printable_sheet_not_the_dashboard(self):
+        """The button used to call window.print() on the dashboard itself."""
+        desk = self.desktop()
+        desk.goto(f"{self.server.base_url}/admin/")
+        desk.fill("#login-number", "2100")
+        desk.fill("#login-password", DEMO_PASSWORD)
+        desk.click("#login-form button[type=submit]")
+        desk.wait_for_selector("#view-main:not(.hidden)", timeout=15_000)
+
+        desk.goto(f"{self.server.base_url}/admin/poster")
+        desk.wait_for_selector("#sheet:not([hidden])", timeout=10_000)
+        # The typed fallback code is on the sheet, and matches the real location.
+        self.assertEqual(desk.inner_text("#code").strip(), self.server.code)
+        self.assertIn("Office", desk.inner_text("#place"))
+        self.assertTrue(desk.get_attribute("#qr", "src").endswith("/qr.svg"))
+
+        # It fits one A4 page rather than spilling onto a second.
+        desk.emulate_media(media="print")
+        height = desk.eval_on_selector("#sheet", "el => el.getBoundingClientRect().height")
+        self.assertLess(height, 1123, "the sheet must fit A4 at 96dpi")
+
+    def test_the_poster_refuses_without_a_dashboard_session(self):
+        """A poster names a workplace and carries its code; it is not public."""
+        page = self.browser.new_page()
+        self.addCleanup(page.close)
+        page.goto(f"{self.server.base_url}/admin/poster")
+        page.wait_for_selector("#banner:not(.hidden)", timeout=10_000)
+        self.assertIn("Sign in", page.inner_text("#banner"))
+        self.assertTrue(page.get_attribute("#sheet", "hidden") is not None)
+
     # -------------------------------------------------------- corrections
 
     def test_an_employee_can_ask_for_a_correction(self):

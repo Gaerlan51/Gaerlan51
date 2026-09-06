@@ -559,8 +559,10 @@ async function loadLocations() {
       `${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)} · ${location.radius_m} m radius`));
     facts.append(el("div", "small muted",
       `Rejects fixes worse than ${location.max_accuracy_m} m · photo ${location.require_photo ? "required" : "off"}`));
-    const print = el("button", "no-print", "Print poster");
-    print.addEventListener("click", () => window.print());
+    const print = el("a", "button no-print", "Open printable poster");
+    print.href = `/admin/poster?location=${location.id}`;
+    print.target = "_blank";
+    print.rel = "noopener";
     facts.append(print);
     poster.append(image, facts);
     card.append(poster);

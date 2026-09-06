@@ -1,0 +1,105 @@
+/* The printed poster.
+ *
+ * This is the one part of the system that lives on a wall, so it is designed
+ * for the wall first: a single sheet, one job per line, and a QR big enough to
+ * read from arm's length in bad corridor light.
+ */
+
+body { background: var(--surface-sunk); }
+
+.toolbar {
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 5;
+}
+
+.sheet {
+  width: 190mm;
+  max-width: calc(100% - 2rem);
+  min-height: 270mm;
+  margin: var(--s-5) auto;
+  padding: 18mm 16mm 14mm;
+  background: #fff;
+  color: #10131a;
+  box-shadow: var(--e-3);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.sheet-head { margin-bottom: 8mm; }
+.sheet h1 { font-size: 30pt; letter-spacing: -0.02em; color: #10131a; }
+.sheet-lede { font-size: 20pt; font-weight: 600; color: #2f3745; margin: 2mm 0 0; }
+
+.qr-holder {
+  padding: 6mm;
+  border: 2px solid #10131a;
+  border-radius: 6mm;
+  background: #fff;
+  line-height: 0;
+}
+.qr-holder img { width: 86mm; height: 86mm; display: block; }
+
+.code-caption { margin: 7mm 0 1mm; font-size: 11pt; color: #4b5563; }
+.code {
+  font-family: var(--mono);
+  font-size: 30pt;
+  font-weight: 700;
+  letter-spacing: .16em;
+  margin: 0 0 8mm;
+  color: #10131a;
+}
+
+.steps {
+  list-style: none;
+  margin: 0 0 auto;
+  padding: 0;
+  text-align: left;
+  max-width: 130mm;
+  width: 100%;
+}
+.steps li {
+  display: flex; align-items: flex-start; gap: 5mm;
+  font-size: 13pt; line-height: 1.45;
+  padding: 3mm 0;
+}
+.step-n {
+  flex: 0 0 auto;
+  width: 9mm; height: 9mm;
+  border-radius: 50%;
+  background: #10131a; color: #fff;
+  display: grid; place-items: center;
+  font-size: 11pt; font-weight: 700;
+}
+
+.sheet-foot {
+  margin-top: 10mm; padding-top: 5mm;
+  border-top: 1px solid #c9cfd8;
+  font-size: 10pt; color: #4b5563;
+  width: 100%;
+}
+.sheet-foot p { margin: 0 0 2mm; }
+.sheet-foot .fine { font-size: 9pt; color: #6b7280; }
+
+/* Printing --------------------------------------------------------------- */
+@page { size: A4 portrait; margin: 10mm; }
+
+@media print {
+  body { background: #fff; }
+  .toolbar, .no-print { display: none !important; }
+  .sheet {
+    width: auto; min-height: auto; max-width: none;
+    margin: 0; padding: 0;
+    box-shadow: none; border-radius: 0;
+    /* Keep the sheet on one page whatever the paper. */
+    page-break-inside: avoid;
+  }
+  /* Ink, not screen colour: the QR must stay pure black on pure white or a
+     cheap printer will render it as a grey mush no camera can read. */
+  .qr-holder { border-color: #000; }
+  .step-n { background: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

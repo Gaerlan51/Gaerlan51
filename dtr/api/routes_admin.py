@@ -468,7 +468,9 @@ def location_qr(request: Request, location_id: int, viewer=deps.StaffDep) -> Res
     url = f"{settings.base_url.rstrip('/')}/app/#c={_location_payload(request, row)}"
     buffer = io.BytesIO()
     # Error correction H: the poster will get scuffed, rained on and taped over.
-    segno.make(url, error="h").save(buffer, kind="svg", scale=8, border=2, dark="#111827")
+    # Pure black, not the interface's near-black: this is ink on paper feeding a
+    # phone camera, and contrast is the only aesthetic that matters.
+    segno.make(url, error="h").save(buffer, kind="svg", scale=8, border=2, dark="#000000")
     return Response(buffer.getvalue(), media_type="image/svg+xml")
 
 

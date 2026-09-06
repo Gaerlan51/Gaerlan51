@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clock-in poster</title>
+<link rel="icon" href="/static/app/icons/icon-192.png">
+<link rel="stylesheet" href="/static/shared/base.css">
+<link rel="stylesheet" href="/static/admin/poster.css">
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <a class="button" href="/admin/">Back to the dashboard</a>
+  <span class="grow"></span>
+  <span class="muted small" id="toolbar-note">One sheet. Print it and put it where people come in.</span>
+  <button id="print" class="primary" type="button">Print</button>
+</div>
+
+<div id="banner" class="notice bad hidden no-print" role="status"></div>
+
+<article class="sheet" id="sheet" hidden>
+  <header class="sheet-head">
+    <h1 id="org">Time Record</h1>
+    <p class="sheet-lede">Scan to clock in or out</p>
+  </header>
+
+  <div class="qr-holder">
+    <img id="qr" alt="" width="360" height="360">
+  </div>
+
+  <p class="code-caption">If the camera will not read it, type this code in the app</p>
+  <p class="code" id="code">————————————</p>
+
+  <ol class="steps">
+    <li><span class="step-n">1</span><span>Open your phone camera and point it at the square above.</span></li>
+    <li><span class="step-n">2</span><span>Tap the link that appears. The Time Record app opens.</span></li>
+    <li><span class="step-n">3</span><span>Wait for the confirmation. That is your time recorded.</span></li>
+  </ol>
+
+  <footer class="sheet-foot">
+    <p><strong id="place">This location</strong> · scans only work here, on site, and the time
+      recorded is the one on the server, not the one on your phone.</p>
+    <p class="fine">Trouble scanning? Speak to your supervisor rather than asking someone else to
+      scan for you — a scan from another person's phone is flagged for review.</p>
+  </footer>
+</article>
+
+<script src="/static/admin/poster.js" type="module"></script>
+</body>
+</html>

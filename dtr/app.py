@@ -145,6 +145,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def admin_app() -> FileResponse:
         return FileResponse(WEB_ROOT / "admin" / "index.html")
 
+    @app.get("/admin/poster")
+    def poster() -> FileResponse:
+        """The printable sheet. Fills itself from the admin API, so it needs a
+        dashboard session — a poster names a workplace and carries its code."""
+        return FileResponse(WEB_ROOT / "admin" / "poster.html")
+
     @app.get("/manifest.webmanifest")
     def manifest() -> FileResponse:
         return FileResponse(WEB_ROOT / "app" / "manifest.webmanifest",

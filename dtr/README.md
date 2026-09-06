@@ -46,8 +46,10 @@ yourself:
 1. Sign in to the dashboard, open **Locations**, and add one. Stand at the
    entrance and press *Use my current position* — the coordinate needs to be
    where people actually scan, not where the building is on a map.
-2. Print the QR poster from that card, with the code underneath in large type
-   for anyone whose camera will not focus.
+2. Open the printable poster from that card and print it. It is a single A4
+   sheet: the QR, the typed fallback code in large figures, three numbered
+   steps, and a line telling staff the recorded time comes from the server
+   rather than their phone.
 3. Add your people under **People**. Hand out temporary passwords in person.
 4. Employees open `/app/`, sign in, replace the password you gave them, accept the
    location notice, and scan.
@@ -56,8 +58,9 @@ A password you issued lets its holder do one thing: choose a different one. Unti
 they do, the server refuses every other route — so nobody, you included, can clock
 in as an account they set up. The same applies to a password you reset for someone.
 
-The poster is safe to photograph — it is not a secret. What stops a remote
-clock-in is the geofence, so the radius matters: 75 m is a sensible default,
+The poster is safe to photograph — it is not a secret, which is why printing it
+needs only a dashboard session rather than anything more careful. What stops a
+remote clock-in is the geofence, so the radius matters: 75 m is a sensible default,
 20 m is below what consumer GPS can do reliably, and anything past a couple of
 hundred metres starts covering the car park across the road.
 
