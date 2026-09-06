@@ -163,6 +163,7 @@
             </table>
           </div>
         </div>
+        <div>
         <div class="card stack" id="add-person-card">
           <h2>Add an employee</h2>
           <form id="person-form" class="stack">
@@ -181,6 +182,36 @@
             <p class="muted tiny">They will be asked to change it. Hand it over in person, not by message.</p>
             <button class="primary" type="submit">Add</button>
           </form>
+        </div>
+
+        <div class="card stack" id="add-shift-card">
+          <h2>Shifts</h2>
+          <p class="muted tiny">Late, undertime and overtime are all measured against these.
+            Anyone with no shift is treated as 08:00–17:00, Monday to Friday.</p>
+          <div id="shift-list"></div>
+          <form id="shift-form" class="stack">
+            <div><label for="s-name">Name</label><input id="s-name" required placeholder="Day 08:00–17:00"></div>
+            <div class="split">
+              <div><label for="s-start">Starts</label><input id="s-start" type="time" value="08:00" required></div>
+              <div><label for="s-end">Ends</label><input id="s-end" type="time" value="17:00" required></div>
+            </div>
+            <div class="split">
+              <div><label for="s-grace">Grace (min)</label><input id="s-grace" type="number" value="15" min="0" max="120"></div>
+              <div><label for="s-break">Unpaid break (min)</label><input id="s-break" type="number" value="60" min="0" max="240"></div>
+            </div>
+            <div>
+              <label for="s-break-after">Deduct the break past (min worked)</label>
+              <input id="s-break-after" type="number" value="300" min="0" max="720">
+              <p class="muted tiny">300 matches the Labor Code meal period, for work of more
+                than five hours. A shorter day keeps its full time.</p>
+            </div>
+            <div>
+              <label>Working days</label>
+              <div class="row" id="s-days"></div>
+            </div>
+            <button class="primary" type="submit">Add shift</button>
+          </form>
+        </div>
         </div>
       </div>
     </div>

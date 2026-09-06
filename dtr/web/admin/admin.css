@@ -34,6 +34,11 @@ nav.sections button[aria-current="true"] { background: var(--accent); color: var
 .count.flagged .n { color: var(--warn); }
 
 .two-col { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1rem; align-items: start; }
+.day-toggle { display: flex; align-items: center; gap: .25rem; font-size: .8rem; }
+.day-toggle input { width: auto; }
+.day-toggle label { margin: 0; font-weight: 500; }
+.shift-row { display: flex; justify-content: space-between; gap: .5rem; padding: .35rem 0;
+             border-bottom: 1px solid var(--line); font-size: .85rem; }
 @media (max-width: 60rem) { .two-col { grid-template-columns: 1fr; } }
 
 .state-dot { display: inline-block; width: .55rem; height: .55rem; border-radius: 50%; margin-right: .4rem; }

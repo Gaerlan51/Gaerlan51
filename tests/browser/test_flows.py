@@ -203,6 +203,34 @@ class BrowserFlowTests(unittest.TestCase):
         desk.wait_for_selector("#banner:not(.hidden)", timeout=10_000)
         self.assertFalse(desk.is_visible("#view-main"))
 
+    def test_an_admin_can_create_a_shift_and_assign_it(self):
+        """Without this the dashboard could only pick shifts, never make one,
+        so a fresh deployment left everyone on the hard-coded default."""
+        desk = self.desktop()
+        desk.goto(f"{self.server.base_url}/admin/")
+        desk.fill("#login-number", "2100")
+        desk.fill("#login-password", DEMO_PASSWORD)
+        desk.click("#login-form button[type=submit]")
+        desk.wait_for_selector("#view-main:not(.hidden)", timeout=15_000)
+        desk.click('nav.sections button[data-section="people"]')
+        desk.wait_for_selector("#shift-form", timeout=10_000)
+
+        desk.fill("#s-name", "Weekend cover")
+        desk.fill("#s-start", "10:00")
+        desk.fill("#s-end", "18:00")
+        desk.uncheck("#s-day-0")
+        desk.check("#s-day-5")
+        desk.click("#shift-form button[type=submit]")
+        desk.wait_for_timeout(1200)
+
+        self.assertIn("Weekend cover", desk.inner_text("#shift-list"))
+        # Days reset to the Monday-to-Friday default, not to nothing.
+        self.assertEqual([desk.is_checked(f"#s-day-{i}") for i in range(7)],
+                         [True, True, True, True, True, False, False])
+        # And it is immediately assignable to a person.
+        options = desk.eval_on_selector_all("#p-shift option", "els => els.map(e => e.textContent)")
+        self.assertTrue(any("Weekend cover" in text for text in options))
+
     # -------------------------------------------------------- corrections
 
     def test_an_employee_can_ask_for_a_correction(self):

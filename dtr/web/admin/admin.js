@@ -306,9 +306,48 @@ async function runReport() {
 
 /* ------------------------------------------------------------------ people */
 
+const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+function buildDayToggles() {
+  const holder = $("s-days");
+  if (holder.childElementCount) return;
+  DAY_NAMES.forEach((name, index) => {
+    const wrap = el("span", "day-toggle");
+    const box = el("input");
+    box.type = "checkbox";
+    box.id = `s-day-${index}`;
+    // defaultChecked, not checked: form.reset() after a submit restores the
+    // HTML default, so setting only .checked would silently clear every day.
+    box.defaultChecked = index < 5;   // Monday to Friday
+    box.checked = index < 5;
+    const label = el("label", null, name);
+    label.htmlFor = box.id;
+    wrap.append(box, label);
+    holder.append(wrap);
+  });
+}
+
+function renderShifts() {
+  const list = $("shift-list");
+  list.replaceChildren();
+  if (!state.shifts.length) {
+    list.append(el("p", "muted small", "No shifts yet — everyone is on the 08:00–17:00 default."));
+    return;
+  }
+  for (const shift of state.shifts) {
+    const row = el("div", "shift-row");
+    row.append(el("span", null, shift.name));
+    const days = DAY_NAMES.filter((_, i) => shift.workdays[i] === "1").join(" ");
+    row.append(el("span", "muted tiny", `${shift.start_time}–${shift.end_time} · ${days}`));
+    list.append(row);
+  }
+}
+
 async function loadPeople() {
   state.shifts = await api("/api/admin/shifts").catch(() => []);
   state.people = await api("/api/admin/employees");
+  buildDayToggles();
+  renderShifts();
 
   const shiftSelect = $("p-shift");
   shiftSelect.replaceChildren();
@@ -350,7 +389,9 @@ async function loadPeople() {
     cells(row, [person.employee_number, person.name, person.department, person.role, phone, status, reset]);
     body.append(row);
   }
-  $("add-person-card").classList.toggle("hidden", state.me.role !== "admin");
+  const adminOnly = state.me.role !== "admin";
+  $("add-person-card").classList.toggle("hidden", adminOnly);
+  $("shift-form").classList.toggle("hidden", adminOnly);
 }
 
 /* --------------------------------------------------------------- locations */
@@ -533,6 +574,34 @@ $("person-form").addEventListener("submit", async (event) => {
     await loadPeople();
   } catch (error) {
     banner(error.message || "Could not add that employee.", "bad");
+  }
+});
+
+$("shift-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const workdays = DAY_NAMES.map((_, i) => ($(`s-day-${i}`).checked ? "1" : "0")).join("");
+  if (!workdays.includes("1")) {
+    banner("A shift needs at least one working day.", "warn");
+    return;
+  }
+  try {
+    await api("/api/admin/shifts", {
+      method: "POST",
+      form: formOf({
+        name: $("s-name").value,
+        start_time: $("s-start").value,
+        end_time: $("s-end").value,
+        grace_minutes: $("s-grace").value,
+        break_minutes: $("s-break").value,
+        break_after_minutes: $("s-break-after").value,
+        workdays,
+      }),
+    });
+    $("shift-form").reset();
+    banner("Shift added. Assign people to it when you add or edit them.", "ok");
+    await loadPeople();
+  } catch (error) {
+    banner(error.message || "Could not add that shift.", "bad");
   }
 });
 
