@@ -559,16 +559,32 @@ async function loadLocations() {
       `${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)} · ${location.radius_m} m radius`));
     facts.append(el("div", "small muted",
       `Rejects fixes worse than ${location.max_accuracy_m} m · photo ${location.require_photo ? "required" : "off"}`));
+    const buttons = el("div", "row");
     const print = el("a", "button no-print", "Open printable poster");
     print.href = `/admin/poster?location=${location.id}`;
     print.target = "_blank";
     print.rel = "noopener";
-    facts.append(print);
+    buttons.append(print);
+
+    // Try the whole flow without deploying. This link deliberately ignores
+    // base_url and uses whatever origin this dashboard is actually open on —
+    // so on the machine running the server it is localhost, which browsers
+    // treat as a secure context and will give a location to.
+    const fragment = String(location.scan_url).split("#")[1] || "";
+    const tryIt = el("a", "button no-print", "Test on this device");
+    tryIt.href = `${window.location.origin}/app/#${fragment}`;
+    tryIt.target = "_blank";
+    tryIt.rel = "noopener";
+    buttons.append(tryIt);
+    facts.append(buttons);
     poster.append(image, facts);
     card.append(poster);
 
     if (state.config && state.config.poster_problem) {
-      card.append(el("p", "notice warn small", state.config.poster_problem));
+      const warn = el("p", "notice warn small");
+      warn.append(document.createTextNode(state.config.poster_problem
+        + " Until then, use Test on this device to try the flow in this browser."));
+      card.append(warn);
     }
     const hint = el("p", "tiny muted",
       "Print this and put it at the entrance. Staff scan it with their phone camera, "

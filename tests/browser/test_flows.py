@@ -273,6 +273,25 @@ class BrowserFlowTests(unittest.TestCase):
         # carry it.
         self.assertIn("no-print", desk.get_attribute("#banner", "class"))
 
+    def test_the_locations_card_offers_a_link_that_works_before_deploying(self):
+        """base_url is not yet a real host, so the poster is dead — but the flow
+        must still be testable from the machine running the server."""
+        desk = self.desktop()
+        desk.goto(f"{self.server.base_url}/admin/")
+        desk.fill("#login-number", "2100")
+        desk.fill("#login-password", DEMO_PASSWORD)
+        desk.click("#login-form button[type=submit]")
+        desk.wait_for_selector("#view-main:not(.hidden)", timeout=15_000)
+        desk.click('nav.sections button[data-section="locations"]')
+        desk.wait_for_selector("text=Test on this device", timeout=10_000)
+
+        href = desk.get_attribute("a:has-text('Test on this device')", "href")
+        # Built from the origin the dashboard is open on, not from base_url.
+        self.assertTrue(href.startswith(self.server.base_url), href)
+        self.assertIn("#c=", href)
+        # And it carries the same signed payload the poster does.
+        self.assertIn(self.server.code, href)
+
     def test_the_poster_refuses_without_a_dashboard_session(self):
         """A poster names a workplace and carries its code; it is not public."""
         page = self.browser.new_page()

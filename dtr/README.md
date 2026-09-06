@@ -147,9 +147,18 @@ poster page carry it until `DTR_BASE_URL` is an `https://` address staff can
 actually reach. The warning is screen-only; a sheet you print anyway does not
 carry it.
 
-To test the whole flow before you deploy, open the scan URL shown on the
-Locations card in a browser **on the machine running the server** — `localhost`
-is a secure context there, so geolocation works and the scan completes.
+To test the whole flow before you deploy, press **Test on this device** on the
+Locations card. It ignores `base_url` and uses whatever origin the dashboard is
+open on, so on the machine running the server that is `localhost` — a secure
+context, where geolocation works and the scan completes end to end.
+
+A third-party QR generator does not help here. The generated code is already
+valid and scannable; what is wrong is the address inside it, and any generator
+fed that address produces the same dead poster. A "dynamic QR" redirect service
+would give you a public HTTPS link, but it puts a company you do not control in
+the path of every clock-in — able to see them and to repoint the code at any
+page it likes. That is a poor trade for a system whose whole point is records
+nobody can quietly interfere with.
 
 Keep a copy of `data/dtr/secret.key` somewhere safe. Losing it invalidates every
 poster you have printed.
