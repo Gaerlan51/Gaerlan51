@@ -134,10 +134,22 @@ deploys to Vercel independently, and nothing here affects it.
 `config/dtr.toml` is committed and holds nothing secret. `config/dtr.local.toml`
 overlays it and is gitignored. `DTR_*` environment variables beat both.
 
-Before going live, set `base_url` to how staff actually reach the system — it is
-baked into the printed posters — and serve over HTTPS. Browsers refuse
-geolocation and camera access on plain HTTP anywhere but `localhost`, so the
-app simply will not work otherwise.
+**A poster only works once `base_url` is right and the site is on HTTPS.** The
+shipped default is `http://localhost:8000`, which is fine for development and
+useless on paper: to a phone, `localhost` is the phone, so scanning that QR
+opens nothing at all. Pointing it at your machine's LAN address does not fix it
+either — browsers only hand a page your location over HTTPS (`localhost` being
+the one exception), so the scan can never finish.
+
+The system now says so rather than letting you find out at the entrance:
+`dtr serve` prints a warning at startup, and both the Locations card and the
+poster page carry it until `DTR_BASE_URL` is an `https://` address staff can
+actually reach. The warning is screen-only; a sheet you print anyway does not
+carry it.
+
+To test the whole flow before you deploy, open the scan URL shown on the
+Locations card in a browser **on the machine running the server** — `localhost`
+is a secure context there, so geolocation works and the scan completes.
 
 Keep a copy of `data/dtr/secret.key` somewhere safe. Losing it invalidates every
 poster you have printed.

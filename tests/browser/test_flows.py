@@ -255,6 +255,24 @@ class BrowserFlowTests(unittest.TestCase):
         height = desk.eval_on_selector("#sheet", "el => el.getBoundingClientRect().height")
         self.assertLess(height, 1123, "the sheet must fit A4 at 96dpi")
 
+    def test_a_poster_that_cannot_work_says_so_before_you_print_it(self):
+        """The test server runs on http://127.0.0.1, which is exactly the
+        configuration that produces an unscannable poster."""
+        desk = self.desktop()
+        desk.goto(f"{self.server.base_url}/admin/")
+        desk.fill("#login-number", "2100")
+        desk.fill("#login-password", DEMO_PASSWORD)
+        desk.click("#login-form button[type=submit]")
+        desk.wait_for_selector("#view-main:not(.hidden)", timeout=15_000)
+
+        desk.goto(f"{self.server.base_url}/admin/poster")
+        desk.wait_for_selector("#sheet:not([hidden])", timeout=10_000)
+        warning = desk.inner_text("#banner")
+        self.assertIn("localhost", warning)
+        # The warning is for the screen. A sheet someone prints anyway must not
+        # carry it.
+        self.assertIn("no-print", desk.get_attribute("#banner", "class"))
+
     def test_the_poster_refuses_without_a_dashboard_session(self):
         """A poster names a workplace and carries its code; it is not public."""
         page = self.browser.new_page()

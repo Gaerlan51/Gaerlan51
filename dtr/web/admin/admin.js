@@ -567,10 +567,16 @@ async function loadLocations() {
     poster.append(image, facts);
     card.append(poster);
 
+    if (state.config && state.config.poster_problem) {
+      card.append(el("p", "notice warn small", state.config.poster_problem));
+    }
     const hint = el("p", "tiny muted",
       "Print this and put it at the entrance. Staff scan it with their phone camera, "
       + "or type the code above if the camera will not focus.");
     card.append(hint);
+    const url = el("p", "tiny faint mono");
+    url.textContent = location.scan_url;
+    card.append(url);
     container.append(card);
   }
 }

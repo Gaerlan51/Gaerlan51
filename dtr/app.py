@@ -87,6 +87,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "photo_capture_available": settings.photo_capture_available,
             "consent_version": settings.consent_version,
             "max_gps_accuracy_m": settings.max_gps_accuracy_m,
+            "base_url": settings.base_url,
+            "poster_ready": settings.poster_ready,
+            "poster_problem": settings.poster_problem,
         }
 
     @app.websocket("/api/ws/board")

@@ -237,6 +237,11 @@ The third tier exists because the second one passed while the app was visibly br
 ## 7. Still to do before this runs a real payroll
 
 - Have the consent notices reviewed locally, and set `consent_version` to what was approved.
+- Set `DTR_BASE_URL` and run behind HTTPS *before printing any poster*. The default
+  `http://localhost:8000` produces a QR that opens nothing on a phone, and a LAN address
+  over plain http produces one whose scan can never finish, because browsers withhold
+  geolocation from an insecure origin. `Settings.poster_problem` detects both and the
+  warning surfaces at startup, on the Locations card and on the poster page.
 - Run behind HTTPS. Cookies only set `Secure` when `base_url` is `https://`, and the browser will
   not give a page geolocation or camera access over plain HTTP anyway, except on `localhost`.
 - Set `DTR_SECRET_KEY` from your secret store rather than letting the generated

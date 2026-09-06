@@ -36,6 +36,15 @@ async function load() {
   const config = await fetch("/api/config", { credentials: "same-origin" })
     .then((r) => r.json()).catch(() => ({}));
 
+  if (config.poster_problem) {
+    // Loud, and above the sheet: this poster cannot work as configured, and
+    // finding that out at the entrance costs somebody their morning.
+    const warn = document.getElementById("banner");
+    warn.className = "notice warn no-print";
+    warn.textContent = config.poster_problem;
+    warn.classList.remove("hidden");
+  }
+
   document.getElementById("org").textContent = config.organisation || "Time Record";
   document.getElementById("place").textContent = location.name;
   document.getElementById("code").textContent = location.code;

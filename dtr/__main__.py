@@ -115,6 +115,11 @@ def cmd_serve(args) -> int:
     settings = load_settings()
     print(f"employee app  {settings.base_url.rstrip('/')}/app/")
     print(f"dashboard     {settings.base_url.rstrip('/')}/admin/")
+    if settings.poster_problem:
+        print()
+        print("note: printed QR posters will NOT work with this configuration.")
+        print(f"      {settings.poster_problem}")
+        print("      Scanning from a browser on this machine still works for testing.")
     uvicorn.run(create_app(settings), host=args.host, port=args.port, log_level=args.log_level)
     return 0
 

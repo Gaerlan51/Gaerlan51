@@ -16,6 +16,7 @@ import secrets
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
+from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from . import DtrError
@@ -105,6 +106,41 @@ class Settings:
     @property
     def tz(self) -> ZoneInfo:
         return self._tz
+
+    @property
+    def poster_problem(self) -> str | None:
+        """Why a printed poster would not work, or None if it would.
+
+        Two ways to print a poster that cannot possibly be scanned, both silent
+        until an employee is standing at the door with a phone:
+
+        * ``base_url`` on localhost — to a phone, "localhost" is the phone, so
+          the QR opens nothing at all;
+        * ``base_url`` on plain http — browsers withhold geolocation from an
+          insecure origin (localhost aside), so the scan can never complete.
+
+        Both are configuration, not code, so the system says so where the poster
+        is printed rather than letting somebody find out at the entrance.
+        """
+        parsed = urlsplit(self.base_url)
+        host = (parsed.hostname or "").lower()
+        if host in {"", "localhost", "127.0.0.1", "::1", "0.0.0.0"}:
+            return (
+                "This poster points at localhost. On a phone that means the phone itself, "
+                "so scanning it opens nothing. Set DTR_BASE_URL to the address staff reach "
+                "this system on, then reprint."
+            )
+        if parsed.scheme != "https":
+            return (
+                "This poster points at a plain http address. Browsers only give a page your "
+                "location over https, so the scan will never finish. Serve this over https, "
+                "then reprint."
+            )
+        return None
+
+    @property
+    def poster_ready(self) -> bool:
+        return self.poster_problem is None
 
 
 _TRUE = {"1", "true", "yes", "on"}
