@@ -135,6 +135,25 @@ the password printed on screen more than once. Real accounts do not.
 ## Tests
 
 ```sh
-python3 -m unittest discover          # everything but the HTTP layer
-.venv/bin/python -m unittest discover # all of it
+python3 -m unittest discover           # the rules; no dependencies needed
+.venv/bin/python -m unittest discover  # adds the HTTP layer
 ```
+
+Anything a missing dependency cannot run is skipped rather than failed, so the
+first command is green on a bare Python 3.11.
+
+The browser tier in `tests/browser/` drives both front-ends in a real Chromium
+and is skipped until you install it:
+
+```sh
+.venv/bin/pip install -r dtr/requirements-dev.txt
+.venv/bin/playwright install chromium
+.venv/bin/python -m unittest discover
+```
+
+It exists because the Python tests exercise the API the page calls, not the
+page. A scan that never leaves the browser — a listener that was never wired, a
+screen that never appears — passes all of them. That is not hypothetical: it is
+how the `hashchange` bug in `dtr/web/app/app.js` reached a commit. Each browser
+test was checked by reintroducing the bug it guards and confirming it, and only
+it, fails.

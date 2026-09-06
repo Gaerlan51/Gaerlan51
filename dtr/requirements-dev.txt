@@ -1,0 +1,7 @@
+# Only needed to run the browser tests in tests/browser/, which drive the two
+# front-ends in a real Chromium. Everything else in the suite runs without it.
+#
+#   pip install -r dtr/requirements-dev.txt
+#   playwright install chromium
+-r requirements.txt
+playwright>=1.40

@@ -182,6 +182,17 @@ Business rules live in the plain modules and are tested without the web layer; `
 translates HTTP. `tests/dtr/test_api.py` skips itself if FastAPI is not installed, so the core suite
 runs on a bare Python 3.11.
 
+Tests come in three tiers, each catching what the one below it structurally cannot:
+
+| Tier | Needs | Catches |
+| --- | --- | --- |
+| `tests/dtr/test_*.py` | nothing | the rules: geofencing, hours, immutability, corrections |
+| `tests/dtr/test_api.py` | FastAPI | authorisation, scoping, status codes, the CSV |
+| `tests/browser/` | Playwright + Chromium | the page: whether a flow a person walks actually works |
+
+The third tier exists because the second one passed while the app was visibly broken — see
+`test_scanning_while_the_app_is_already_open_still_works`.
+
 ---
 
 ## 6. Deviations from the original brief
