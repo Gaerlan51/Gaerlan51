@@ -1,0 +1,33 @@
+# Render deployment. Note that a persistent disk requires a paid instance type;
+# on the free tier the filesystem is wiped on every deploy, which for this
+# system means losing employment records — so the plan below is not optional.
+#
+# ONE INSTANCE ONLY, for the same reason as fly.toml: SQLite is a file.
+
+services:
+  - type: web
+    name: dtr
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: singapore
+    plan: starter
+    numInstances: 1
+    healthCheckPath: /api/health
+    envVars:
+      - key: DTR_DATA_DIR
+        value: /data
+      - key: DTR_HOST
+        value: 0.0.0.0
+      # Set this to the real URL after the first deploy, then redeploy: it is
+      # baked into every printed QR poster, and it is what makes session
+      # cookies Secure.
+      - key: DTR_BASE_URL
+        sync: false
+      # Generated once and held in Render's secret store. Losing it invalidates
+      # every poster you have printed, so keep a copy somewhere else too.
+      - key: DTR_SECRET_KEY
+        generateValue: true
+    disk:
+      name: dtr-data
+      mountPath: /data
+      sizeGB: 1

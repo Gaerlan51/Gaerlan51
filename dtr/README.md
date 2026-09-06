@@ -73,6 +73,49 @@ hundred metres starts covering the car park across the road.
 .venv/bin/python -m dtr purge --yes             # retention sweep; put it on a cron
 ```
 
+## Deploy it
+
+The app is one process with one SQLite file, so it wants a container host with
+a persistent disk. `Dockerfile`, `fly.toml` and `render.yaml` are in the repo
+root.
+
+On Fly.io:
+
+```sh
+fly launch --no-deploy          # rewrites app and region in fly.toml
+fly volumes create dtr_data --size 1 --region sin
+fly secrets set DTR_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
+fly deploy
+fly secrets set DTR_BASE_URL="https://<your-app>.fly.dev"   # then it redeploys
+fly ssh console -C "python -m dtr admin 1001 'Your Name'"
+```
+
+On Render: point a new Blueprint at this repo, set `DTR_BASE_URL` to the URL it
+gives you, and redeploy. A persistent disk needs a paid instance type — on the
+free tier the filesystem is wiped on every deploy, which here means losing
+employment records.
+
+Three things that matter more than usual:
+
+- **Run exactly one instance.** SQLite is a file on the volume, not a server.
+  Two machines means two volumes, each holding half the time records and
+  neither aware of the other. Both config files pin this; don't undo it. If you
+  outgrow one machine, move to Postgres before scaling out.
+- **Set `DTR_BASE_URL` to the real URL.** It is baked into every printed QR
+  poster, and it is what makes session cookies `Secure`.
+- **Back up `/data`.** It holds the database, the scan photos, and the signing
+  key. `fly ssh console -C "tar cz /data" > backup.tgz` will do; losing the key
+  alone invalidates every poster you have printed.
+
+Serverless platforms do not suit this app. Vercel, Netlify Functions and Lambda
+all give a function an ephemeral filesystem, so the database would be discarded
+between invocations — records would appear to save and then vanish. Vercel also
+does not support WebSockets on serverless functions, though that one is
+survivable: the dashboard already falls back to polling. Running there would
+mean Postgres for the records, blob storage for the photos, and reimplementing
+the append-only triggers in PL/pgSQL. The static marketing site in `web/`
+deploys to Vercel independently, and nothing here affects it.
+
 ## Configure it
 
 `config/dtr.toml` is committed and holds nothing secret. `config/dtr.local.toml`

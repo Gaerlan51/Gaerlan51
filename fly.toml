@@ -1,0 +1,46 @@
+# Fly.io deployment. `fly launch --no-deploy` will rewrite `app` and
+# `primary_region` for you; everything below is chosen deliberately.
+#
+# ONE MACHINE ONLY. SQLite is a file on the volume below, not a server. Running
+# `fly scale count 2` gives you two machines with two separate volumes, each
+# holding half the time records and neither aware of the other. If you outgrow
+# one machine, move to Postgres first — see specs/dtr-spec.md.
+
+app = "dtr"
+primary_region = "sin"   # Singapore: the closest region to the Philippines
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  DTR_DATA_DIR = "/data"
+  DTR_HOST = "0.0.0.0"
+  PORT = "8000"
+
+[http_service]
+  internal_port = 8000
+  # Browsers withhold geolocation and camera access on plain HTTP, so without
+  # this the scan simply cannot complete.
+  force_https = true
+  # Kept warm on purpose. A scan should feel instant, and a cold start does not.
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "15s"
+    method = "GET"
+    path = "/api/health"
+
+# Everything that must outlive a deploy: the database, the scan photos, and the
+# signing key that validates every printed poster.
+[[mounts]]
+  source = "dtr_data"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+  cpus = 1

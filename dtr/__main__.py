@@ -14,6 +14,7 @@ convention the ops toolkit in this repo uses.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -148,9 +149,15 @@ def build_parser() -> argparse.ArgumentParser:
     purge_parser.set_defaults(func=cmd_purge)
 
     serve_parser = subparsers.add_parser("serve", help="run the web app")
-    serve_parser.add_argument("--host", default="127.0.0.1")
-    serve_parser.add_argument("--port", type=int, default=8000)
-    serve_parser.add_argument("--log-level", default="info")
+    # Loopback by default: a development server should not be on the network by
+    # accident. Container hosts set DTR_HOST=0.0.0.0, and most of them hand the
+    # port in as $PORT, so both are read from the environment.
+    serve_parser.add_argument("--host", default=os.environ.get("DTR_HOST", "127.0.0.1"))
+    serve_parser.add_argument(
+        "--port", type=int,
+        default=int(os.environ.get("PORT") or os.environ.get("DTR_PORT") or 8000),
+    )
+    serve_parser.add_argument("--log-level", default=os.environ.get("DTR_LOG_LEVEL", "info"))
     serve_parser.set_defaults(func=cmd_serve)
 
     return parser

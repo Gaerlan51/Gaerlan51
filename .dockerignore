@@ -1,0 +1,23 @@
+# Never bake data into an image: the database, scan photos and signing key
+# belong on the mounted volume, not in a layer anyone can pull.
+data/
+out/
+config/*.local.toml
+
+.git/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# The image serves the DTR app only. The static marketing site in web/ is a
+# separate deployment (see vercel.json).
+web/
+ops/
+templates/
+prompts/
+specs/
+tests/
+scripts/
+*.md

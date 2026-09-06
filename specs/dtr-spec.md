@@ -215,6 +215,10 @@ runs on a bare Python 3.11.
   are marked `must_change_password`; the API then refuses every route but "who am I" and "set my
   password" until the holder picks their own. Seeded demo accounts are the one exception, so the
   demo stays usable — see `dtr/seed.py`.
+- Run exactly one instance. SQLite is a file on a volume, and the append-only
+  triggers in §2 are enforced by that one file. `fly.toml` and `render.yaml` pin this;
+  a serverless platform cannot host it at all, because a function's filesystem does not
+  survive the invocation that wrote to it.
 - Schedule `python -m dtr purge --yes` on a cron. It sweeps both windows: scan photos past
   `photo_retention_days`, and time records past `retention_days`. Satisfy yourself both figures
   are right for you before the first run — it deletes, and the trigger that normally prevents
