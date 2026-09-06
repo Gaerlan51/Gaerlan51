@@ -559,6 +559,9 @@ async function loadLocations() {
       `${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)} · ${location.radius_m} m radius`));
     facts.append(el("div", "small muted",
       `Rejects fixes worse than ${location.max_accuracy_m} m · photo ${location.require_photo ? "required" : "off"}`));
+    const url = el("p", "tiny faint mono selectable");
+    url.textContent = location.scan_url;
+
     const buttons = el("div", "row");
     const print = el("a", "button no-print", "Open printable poster");
     print.href = `/admin/poster?location=${location.id}`;
@@ -576,6 +579,29 @@ async function loadLocations() {
     tryIt.target = "_blank";
     tryIt.rel = "noopener";
     buttons.append(tryIt);
+
+    // For anyone who wants to make the square somewhere else — a branded QR
+    // with a logo in the middle, say. What a generator changes is how the
+    // square looks; what makes it work is the address inside it, which is
+    // this text, unchanged.
+    const copy = el("button", "no-print", "Copy scan link");
+    copy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(location.scan_url);
+        copy.textContent = "Copied";
+        setTimeout(() => { copy.textContent = "Copy scan link"; }, 2000);
+      } catch (err) {
+        // No clipboard permission, or an insecure context. Select it instead
+        // so Ctrl-C still works.
+        const range = document.createRange();
+        range.selectNodeContents(url);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        banner("Copy it with Ctrl-C — it is selected below.", "warn");
+      }
+    });
+    buttons.append(copy);
     facts.append(buttons);
     poster.append(image, facts);
     card.append(poster);
@@ -590,8 +616,9 @@ async function loadLocations() {
       "Print this and put it at the entrance. Staff scan it with their phone camera, "
       + "or type the code above if the camera will not focus.");
     card.append(hint);
-    const url = el("p", "tiny faint mono");
-    url.textContent = location.scan_url;
+    card.append(el("p", "tiny faint",
+      "Any QR generator you paste this into encodes exactly this text. It changes how "
+      + "the square looks, never whether it works \u2014 that is the address below."));
     card.append(url);
     container.append(card);
   }

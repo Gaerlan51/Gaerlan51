@@ -292,6 +292,29 @@ class BrowserFlowTests(unittest.TestCase):
         # And it carries the same signed payload the poster does.
         self.assertIn(self.server.code, href)
 
+    def test_the_scan_link_can_be_copied_for_use_in_any_qr_generator(self):
+        """What a generator changes is how the square looks. What makes it work
+        is the address inside it, so the address has to be easy to take away."""
+        context = self.browser.new_context(
+            viewport=DESK, permissions=["clipboard-read", "clipboard-write"])
+        self.addCleanup(context.close)
+        desk = context.new_page()
+        self.fail_on_page_error(desk)
+        desk.goto(f"{self.server.base_url}/admin/")
+        desk.fill("#login-number", "2100")
+        desk.fill("#login-password", DEMO_PASSWORD)
+        desk.click("#login-form button[type=submit]")
+        desk.wait_for_selector("#view-main:not(.hidden)", timeout=15_000)
+        desk.click('nav.sections button[data-section="locations"]')
+        desk.wait_for_selector("button:has-text('Copy scan link')", timeout=10_000)
+
+        desk.click("button:has-text('Copy scan link')")
+        desk.wait_for_timeout(500)
+        copied = desk.evaluate("navigator.clipboard.readText()")
+        self.assertIn(self.server.code, copied)
+        self.assertIn("#c=", copied)
+        self.assertIn("Copied", desk.inner_text("#locations-list"))
+
     def test_the_poster_refuses_without_a_dashboard_session(self):
         """A poster names a workplace and carries its code; it is not public."""
         page = self.browser.new_page()

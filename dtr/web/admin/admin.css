@@ -183,6 +183,8 @@ th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
   font-family: var(--mono);
 }
 
+.selectable { user-select: all; cursor: text; }
+
 /* Audit ------------------------------------------------------------------ */
 .audit-value {
   font-size: var(--t-xs); max-width: 20rem; overflow-wrap: anywhere;
