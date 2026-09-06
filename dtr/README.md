@@ -14,6 +14,16 @@ The design decisions, the trade-offs behind them, and the residual risks are in
 ## Run it
 
 ```sh
+./dtr.sh
+```
+
+That is the whole thing: it builds a virtualenv, installs the four
+dependencies, creates the database, adds demo data on the first run only, and
+starts the server. Arguments pass through, so `./dtr.sh --port 9000` works.
+
+The same steps by hand, if you would rather see them:
+
+```sh
 python3 -m venv .venv && .venv/bin/pip install -r dtr/requirements.txt
 .venv/bin/python -m dtr init          # create data/dtr/dtr.db
 .venv/bin/python -m dtr seed          # demo people and a location, optional
@@ -24,7 +34,8 @@ python3 -m venv .venv && .venv/bin/pip install -r dtr/requirements.txt
 - Dashboard: <http://localhost:8000/admin/> — sign in as `1001`
 - Demo password: `changeme123`
 
-For a real deployment, skip `seed` and create the first account yourself:
+For a real deployment, delete the demo database and create the first account
+yourself:
 
 ```sh
 .venv/bin/python -m dtr admin 1001 "Your Name"   # prompts for a password
