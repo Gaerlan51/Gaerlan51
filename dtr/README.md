@@ -13,13 +13,26 @@ The design decisions, the trade-offs behind them, and the residual risks are in
 
 ## Run it
 
+**macOS or Linux**
+
 ```sh
 ./dtr.sh
 ```
 
-That is the whole thing: it builds a virtualenv, installs the four
-dependencies, creates the database, adds demo data on the first run only, and
-starts the server. Arguments pass through, so `./dtr.sh --port 9000` works.
+**Windows** — in PowerShell, or double-click `dtr.cmd`
+
+```powershell
+.\dtr.ps1
+```
+
+Either builds a virtual environment, installs the four dependencies, creates
+the database, adds demo data on the first run only, and starts the server.
+Arguments pass through, so `--port 9000` works.
+
+Then open <http://localhost:8000/admin/> and **leave that terminal window
+open**. The server runs in it. Close it and the browser will say
+`ERR_CONNECTION_REFUSED`, which means nothing is listening — not that anything
+is broken.
 
 The same steps by hand, if you would rather see them:
 
