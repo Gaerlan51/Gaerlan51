@@ -2,6 +2,9 @@
 
 .layout { max-width: 78rem; margin: 0 auto; padding: 1rem 1.25rem 4rem; }
 
+/* The two screens you meet before the dashboard are forms, not tables. */
+#view-login, #view-password { max-width: 26rem; margin: 3rem auto 0; }
+
 .topbar {
   display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
   padding: .85rem 0; border-bottom: 1px solid var(--line); margin-bottom: 1.25rem;

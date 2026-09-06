@@ -149,6 +149,7 @@ employee's acceptance so that rewording requires a fresh yes.
 | Missing time-out | `dtr/scan.py`, `dtr/live.py` | Yesterday is never auto-closed. A new day opens, the stale day is flagged, and a correction fixes it. |
 | No employee edit path | `dtr/api/routes_employee.py` | Read-only, asserted by test. |
 | Separate admin session | `dtr/auth.py` | A PWA session can never reach a dashboard route, even for an admin. |
+| Issued passwords expire on use | `dtr/api/deps.py` | An account still holding a password someone else chose can sign in and do nothing else until it sets its own. Enforced server-side, because the person who issued it must not be able to act as the account. |
 | Append-only storage | `dtr/db.py` | SQLite triggers, not application politeness. |
 | Audit trail | `dtr/audit.py` | Including refusals, photo views and exports. |
 
@@ -192,6 +193,11 @@ runs on a bare Python 3.11.
    makes the one-open-session rule enforceable rather than advisory.
 4. **A consent gate blocks the first scan** until the location notice is accepted. Not in the brief,
    but implied by its own privacy requirement, and cheaper to build now than to retrofit.
+5. **A handed-out password is not a credential.** The brief's role table assumes authentication
+   exists; it does not say what a password issued by HR is worth. Here it is worth exactly one
+   thing: signing in to replace itself. Otherwise the person who typed the temporary password into
+   the dashboard can clock in as the employee they created, which would reopen buddy punching
+   through the front door.
 
 ---
 
@@ -203,8 +209,10 @@ runs on a bare Python 3.11.
 - Set `DTR_SECRET_KEY` from your secret store rather than letting the generated
   `data/dtr/secret.key` be the only copy, and back that file up — losing it invalidates every
   printed poster.
-- Decide who holds admin. The `must_change_password` flag is set on every account this system
-  creates, but nothing yet forces the change at sign-in.
+- Decide who holds admin. Accounts created from the dashboard, and any password an admin resets,
+  are marked `must_change_password`; the API then refuses every route but "who am I" and "set my
+  password" until the holder picks their own. Seeded demo accounts are the one exception, so the
+  demo stays usable — see `dtr/seed.py`.
 - Schedule `python -m dtr purge --yes` on a cron. It sweeps both windows: scan photos past
   `photo_retention_days`, and time records past `retention_days`. Satisfy yourself both figures
   are right for you before the first run — it deletes, and the trigger that normally prevents

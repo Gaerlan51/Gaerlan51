@@ -27,6 +27,11 @@ class ApiTests(unittest.TestCase):
         self.employee = self.fx.add_employee("1003", "Ana Reyes", password="password123")
         self.admin = self.fx.add_employee("1001", "Bea Lim", role="admin", password="password123")
         self.newcomer = self.fx.add_employee("1004", "Cy Tan", consent=False, password="password123")
+        # Two accounts still holding the password someone else chose for them.
+        self.issued = self.fx.add_employee("1005", "Dee Ramos", password="issued-by-hr",
+                                           must_change_password=True)
+        self.issued_admin = self.fx.add_employee("1006", "Eve Santos", role="admin",
+                                                 password="issued-by-hr", must_change_password=True)
         self.fx.conn.close()  # from here on the app opens its own connections
 
         self.client = TestClient(create_app(self.fx.settings))
@@ -166,6 +171,85 @@ class ApiTests(unittest.TestCase):
         response = self.client.get(f"/api/admin/locations/{self.fx.location_id}/qr.svg")
         self.assertEqual(response.headers["content-type"], "image/svg+xml")
         self.assertIn(b"<svg", response.content)
+
+    # ------------------------------- a handed-out password is not a credential
+
+    def test_an_issued_password_signs_in_but_cannot_scan(self):
+        self.assertEqual(self.sign_in("1005", "issued-by-hr").status_code, 200)
+        response = self.scan()
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.json()["detail"]["code"], "password_change_required")
+
+    def test_an_issued_password_cannot_read_a_record_either(self):
+        self.sign_in("1005", "issued-by-hr")
+        for path in ("/api/my/logs", "/api/my/status", "/api/my/corrections"):
+            with self.subTest(path=path):
+                self.assertEqual(self.client.get(path).status_code, 403)
+
+    def test_an_issued_password_cannot_open_the_dashboard(self):
+        self.assertEqual(self.sign_in("1006", "issued-by-hr", admin=True).status_code, 200)
+        for path in ("/api/admin/board", "/api/admin/employees", "/api/admin/report.csv"):
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertEqual(response.status_code, 403)
+                self.assertEqual(response.json()["detail"]["code"], "password_change_required")
+
+    def test_an_issued_password_cannot_open_the_live_socket(self):
+        self.sign_in("1006", "issued-by-hr", admin=True)
+        from starlette.websockets import WebSocketDisconnect
+        with self.assertRaises(WebSocketDisconnect):
+            with self.client.websocket_connect("/api/ws/board"):
+                pass
+
+    def test_the_front_end_can_still_ask_who_it_is(self):
+        """Otherwise it has no way to know why everything else is refused."""
+        self.sign_in("1005", "issued-by-hr")
+        body = self.client.get("/api/auth/me").json()
+        self.assertTrue(body["must_change_password"])
+
+    def test_setting_your_own_password_lifts_the_block(self):
+        self.sign_in("1005", "issued-by-hr")
+        response = self.client.post("/api/auth/password", data={
+            "current_password": "issued-by-hr", "new_password": "one-only-i-know",
+        })
+        self.assertEqual(response.status_code, 200)
+        # The change signs you out everywhere, on purpose.
+        self.assertEqual(self.client.get("/api/auth/me").status_code, 401)
+        self.assertEqual(self.sign_in("1005", "one-only-i-know").status_code, 200)
+        self.assertEqual(self.scan().status_code, 200)
+
+    def test_an_admin_can_do_it_without_opening_the_employee_app(self):
+        self.sign_in("1006", "issued-by-hr", admin=True)
+        response = self.client.post("/api/auth/password", data={
+            "current_password": "issued-by-hr", "new_password": "one-only-i-know",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.sign_in("1006", "one-only-i-know", admin=True)
+        self.assertEqual(self.client.get("/api/admin/board").status_code, 200)
+
+    def test_keeping_the_issued_password_is_refused(self):
+        self.sign_in("1005", "issued-by-hr")
+        response = self.client.post("/api/auth/password", data={
+            "current_password": "issued-by-hr", "new_password": "issued-by-hr",
+        })
+        self.assertEqual(response.status_code, 400)
+
+    def test_the_wrong_current_password_changes_nothing(self):
+        self.sign_in("1005", "issued-by-hr")
+        response = self.client.post("/api/auth/password", data={
+            "current_password": "guessing", "new_password": "one-only-i-know",
+        })
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(self.sign_in("1005", "issued-by-hr").status_code, 200)
+
+    def test_an_admin_reset_puts_the_block_back(self):
+        self.sign_in("1001", admin=True)
+        target = self.conn.execute("SELECT id FROM employees WHERE employee_number = '1003'").fetchone()["id"]
+        response = self.client.post(f"/api/admin/employees/{target}/password",
+                                    data={"password": "temporary-one"})
+        self.assertEqual(response.status_code, 200)
+        self.sign_in("1003", "temporary-one")
+        self.assertEqual(self.scan().status_code, 403)
 
     # ------------------------------------------------------- housekeeping
 

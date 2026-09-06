@@ -30,10 +30,20 @@ async function api(path, { method = "GET", form = null } = {}) {
   try { body = await response.json(); } catch (err) { body = null; }
   if (!response.ok) {
     const detail = body && body.detail;
-    if (detail && typeof detail === "object") throw detail;
+    if (detail && typeof detail === "object") {
+      if (detail.code === "password_change_required") showOnly("password");
+      throw detail;
+    }
     throw { message: (typeof detail === "string" && detail) || `Request failed (${response.status}).` };
   }
   return body;
+}
+
+/* Three top-level screens: sign in, choose a password, the dashboard itself. */
+function showOnly(name) {
+  for (const view of ["login", "password", "main"]) {
+    document.getElementById(`view-${view}`).classList.toggle("hidden", view !== name);
+  }
 }
 
 function formOf(pairs) {
@@ -427,13 +437,16 @@ function showLogin() {
   state.me = null;
   stopPolling();
   if (state.socket) state.socket.close();
-  $("view-login").classList.remove("hidden");
-  $("view-main").classList.add("hidden");
+  showOnly("login");
 }
 
 async function enterDashboard() {
-  $("view-login").classList.add("hidden");
-  $("view-main").classList.remove("hidden");
+  if (state.me.must_change_password) {
+    // Every dashboard route refuses this session until the password is theirs.
+    showOnly("password");
+    return;
+  }
+  showOnly("main");
   $("who").textContent = `${state.me.name} · ${state.me.role}`;
   state.config = await api("/api/config").catch(() => null);
   if (state.config) $("org-name").textContent = `${state.config.organisation} · DTR`;
@@ -461,6 +474,29 @@ $("login-form").addEventListener("submit", async (event) => {
     await enterDashboard();
   } catch (error) {
     banner(error.message || "Could not sign in.", "bad");
+  }
+});
+
+$("password-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if ($("pw-new").value !== $("pw-again").value) {
+    banner("Those two do not match.", "warn");
+    return;
+  }
+  const button = event.currentTarget.querySelector("button");
+  button.disabled = true;
+  try {
+    await api("/api/auth/password", {
+      method: "POST",
+      form: formOf({ current_password: $("pw-current").value, new_password: $("pw-new").value }),
+    });
+    $("password-form").reset();
+    showLogin();
+    banner("Saved. Sign in again with your new password.", "ok");
+  } catch (error) {
+    banner(error.message || "That password was not accepted.", "bad");
+  } finally {
+    button.disabled = false;
   }
 });
 
@@ -538,3 +574,4 @@ $("location-form").addEventListener("submit", async (event) => {
 api("/api/auth/admin/me")
   .then(async (me) => { state.me = me; await enterDashboard(); })
   .catch(() => showLogin());
+

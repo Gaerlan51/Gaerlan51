@@ -38,7 +38,12 @@ For a real deployment, skip `seed` and create the first account yourself:
 2. Print the QR poster from that card, with the code underneath in large type
    for anyone whose camera will not focus.
 3. Add your people under **People**. Hand out temporary passwords in person.
-4. Employees open `/app/`, sign in, accept the location notice, and scan.
+4. Employees open `/app/`, sign in, replace the password you gave them, accept the
+   location notice, and scan.
+
+A password you issued lets its holder do one thing: choose a different one. Until
+they do, the server refuses every other route — so nobody, you included, can clock
+in as an account they set up. The same applies to a password you reset for someone.
 
 The poster is safe to photograph — it is not a secret. What stops a remote
 clock-in is the geofence, so the radius matters: 75 m is a sensible default,
@@ -69,6 +74,9 @@ app simply will not work otherwise.
 
 Keep a copy of `data/dtr/secret.key` somewhere safe. Losing it invalidates every
 poster you have printed.
+
+The seeded demo accounts skip the forced password change so you can sign in with
+the password printed on screen more than once. Real accounts do not.
 
 ## Tests
 

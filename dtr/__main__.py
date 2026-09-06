@@ -41,6 +41,7 @@ def cmd_seed(args) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     print(f"seeded {result['employees']} demo employees; every password is {result['password']!r}")
+    print("(demo accounts skip the forced password change that real ones get)")
     print(f"location code {result['location_code']}")
     print(f"scan URL      {settings.base_url.rstrip('/')}/app/#c={result['payload']}")
     print("sign in to the dashboard as 1001, to the employee app as 1003.")

@@ -103,6 +103,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if scope != auth.ADMIN:
                 raise DtrError("wrong session")
             auth.require_role(viewer, "supervisor")
+            if viewer["must_change_password"]:
+                raise DtrError("password change pending")
         except DtrError:
             await websocket.close(code=4401)
             return

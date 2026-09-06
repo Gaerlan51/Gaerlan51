@@ -34,7 +34,10 @@ async function api(path, { method = "GET", form = null } = {}) {
   try { body = await response.json(); } catch (err) { body = null; }
   if (!response.ok) {
     const detail = body && body.detail;
-    if (detail && typeof detail === "object") throw detail;
+    if (detail && typeof detail === "object") {
+      if (detail.code === "password_change_required") show("password");
+      throw detail;
+    }
     throw { code: `http_${response.status}`, message: (typeof detail === "string" && detail) || "Something went wrong." };
   }
   return body;
@@ -381,6 +384,14 @@ async function start() {
   const queued = payloadFromHash();
   if (queued) history.replaceState(null, "", location.pathname);
 
+  if (state.me && state.me.must_change_password) {
+    // The server refuses every other route until this is done; the screen just
+    // explains why rather than letting them walk into a wall of 403s.
+    if (queued) sessionStorage.setItem("dtr.pendingPayload", queued);
+    show("password");
+    return;
+  }
+
   if (!state.me) {
     show("login");
     if (queued) {
@@ -429,6 +440,30 @@ $("login-form").addEventListener("submit", async (event) => {
     await start();
   } catch (error) {
     banner(error.message || "Could not sign in.", "bad", true);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("password-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if ($("pw-new").value !== $("pw-again").value) {
+    banner("Those two do not match.", "warn");
+    return;
+  }
+  const button = event.currentTarget.querySelector("button");
+  button.disabled = true;
+  try {
+    await api("/api/auth/password", {
+      method: "POST",
+      form: formOf({ current_password: $("pw-current").value, new_password: $("pw-new").value }),
+    });
+    $("password-form").reset();
+    state.me = null;
+    show("login");
+    banner("Saved. Sign in again with your new password.", "ok", true);
+  } catch (error) {
+    banner(error.message || "That password was not accepted.", "bad", true);
   } finally {
     button.disabled = false;
   }

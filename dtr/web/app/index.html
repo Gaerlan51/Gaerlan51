@@ -34,6 +34,30 @@
     </form>
   </section>
 
+  <!-- Choose your own password --------------------------------------------- -->
+  <section id="view-password" class="hidden">
+    <h1>Choose your own password</h1>
+    <p class="muted small">Someone handed you the one you just used, so it is not yet
+      yours. Pick one only you know before you clock in.</p>
+    <form id="password-form" class="card stack">
+      <div>
+        <label for="pw-current">The password you were given</label>
+        <input id="pw-current" type="password" autocomplete="current-password" required>
+      </div>
+      <div>
+        <label for="pw-new">Your new password</label>
+        <input id="pw-new" type="password" autocomplete="new-password" minlength="8" required>
+      </div>
+      <div>
+        <label for="pw-again">Type it again</label>
+        <input id="pw-again" type="password" autocomplete="new-password" minlength="8" required>
+      </div>
+      <p class="muted tiny">At least 8 characters. You will be signed out and asked to
+        sign in again with the new one.</p>
+      <button class="primary" type="submit">Save it</button>
+    </form>
+  </section>
+
   <!-- Consent ------------------------------------------------------------ -->
   <section id="view-consent" class="hidden">
     <h1 id="consent-title">Location notice</h1>

@@ -59,9 +59,14 @@ def seed(conn: sqlite3.Connection, settings: Settings, *, force: bool = False) -
         if store.find_employee_by_number(conn, number):
             continue
         cursor = conn.execute(
+            # must_change_password stays 0 here, and only here. Real accounts —
+            # created from the dashboard or reset by an admin — carry 1, and the
+            # API refuses every route until the holder picks their own. Demo
+            # accounts are meant to be signed into repeatedly with the password
+            # printed on screen, so they skip it.
             "INSERT INTO employees (employee_number, full_name, department, role, shift_id, "
             "password_hash, must_change_password, status, created_at, updated_at) "
-            "VALUES (?, ?, ?, ?, ?, ?, 1, 'active', ?, ?)",
+            "VALUES (?, ?, ?, ?, ?, ?, 0, 'active', ?, ?)",
             (number, name, department, role, shift_ids[shift_index], password_hash, now, now),
         )
         by_number[number] = int(cursor.lastrowid)

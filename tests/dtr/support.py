@@ -70,15 +70,17 @@ class Fixture:
         consent: bool = True,
         supervisor_id: int | None = None,
         shift_id: int | None = -1,
+        must_change_password: bool = False,
     ) -> sqlite3.Row:
         consented = self.now if consent else None
         employee_id = int(self.conn.execute(
             "INSERT INTO employees (employee_number, full_name, department, role, supervisor_id, "
             "shift_id, password_hash, must_change_password, status, consent_location_at, "
-            "created_at, updated_at) VALUES (?, ?, 'Ops', ?, ?, ?, ?, 0, 'active', ?, ?, ?)",
+            "created_at, updated_at) VALUES (?, ?, 'Ops', ?, ?, ?, ?, ?, 'active', ?, ?, ?)",
             (number, name, role, supervisor_id,
              self.shift_id if shift_id == -1 else shift_id,
              security.hash_password(password, iterations=TEST_ITERATIONS),
+             1 if must_change_password else 0,
              consented, self.now, self.now),
         ).lastrowid)
         return store.get_employee(self.conn, employee_id)

@@ -107,12 +107,13 @@ def logout(request: Request, response: Response) -> dict:
 
 
 @router.get("/me")
-def me(request: Request, employee=deps.EmployeeDep) -> dict:
+def me(request: Request, employee=deps.PendingEmployeeDep) -> dict:
+    """Ungated: the front-end has to be able to read must_change_password."""
     return _profile(employee, auth.EMPLOYEE)
 
 
 @router.get("/admin/me")
-def admin_me(request: Request, employee=deps.StaffDep) -> dict:
+def admin_me(request: Request, employee=deps.PendingStaffDep) -> dict:
     return _profile(employee, auth.ADMIN)
 
 
@@ -121,11 +122,22 @@ def change_password(
     request: Request,
     current_password: str = Form(...),
     new_password: str = Form(..., min_length=8),
-    employee=deps.EmployeeDep,
+    employee=deps.AnySessionDep,
 ) -> dict:
+    """Set your own password.
+
+    Reachable while a password change is pending — it is the one thing such an
+    account may do — and from either session, so an admin who only ever opens
+    the dashboard is not sent to the employee app to do it.
+    """
     conn = deps.get_conn(request)
     if not security.verify_password(current_password, employee["password_hash"]):
         raise HTTPException(status.HTTP_403_FORBIDDEN, "current password is wrong")
+    if security.verify_password(new_password, employee["password_hash"]):
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            "that is the password you already have; the point is that nobody else knows the new one",
+        )
     try:
         auth.set_password(conn, employee["id"], new_password,
                           changed_by_id=employee["id"], reason="self-service change")
