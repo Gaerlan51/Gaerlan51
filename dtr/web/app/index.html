@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Time Record</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/static/app/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/static/app/icons/icon-192.png">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="stylesheet" href="/static/shared/base.css">
+<link rel="stylesheet" href="/static/app/app.css">
+</head>
+<body>
+<main class="shell">
+
+  <div id="banner" class="notice hidden" role="status" aria-live="polite"></div>
+
+  <!-- Sign in ------------------------------------------------------------ -->
+  <section id="view-login" class="hidden">
+    <h1 id="org-name">Time Record</h1>
+    <p class="muted small">Sign in to clock in and out.</p>
+    <form id="login-form" class="card stack">
+      <div>
+        <label for="login-number">Employee number</label>
+        <input id="login-number" name="employee_number" autocomplete="username"
+               autocapitalize="characters" required>
+      </div>
+      <div>
+        <label for="login-password">Password</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="primary" type="submit">Sign in</button>
+    </form>
+  </section>
+
+  <!-- Consent ------------------------------------------------------------ -->
+  <section id="view-consent" class="hidden">
+    <h1 id="consent-title">Location notice</h1>
+    <div class="card stack">
+      <div id="consent-body" class="notice-body"></div>
+      <button id="consent-accept" class="primary" type="button">I have read this and I agree</button>
+      <button id="consent-decline" class="link" type="button">Not now</button>
+    </div>
+  </section>
+
+  <!-- Home --------------------------------------------------------------- -->
+  <section id="view-home" class="hidden">
+    <header class="masthead">
+      <span class="who" id="home-name"></span>
+      <button id="sign-out" class="link" type="button">Sign out</button>
+    </header>
+
+    <div class="tabs" role="tablist">
+      <button id="tab-now" role="tab" aria-selected="true" type="button">Now</button>
+      <button id="tab-history" role="tab" aria-selected="false" type="button">My record</button>
+      <button id="tab-requests" role="tab" aria-selected="false" type="button">Requests</button>
+    </div>
+
+    <!-- Now -->
+    <div id="panel-now">
+      <div class="card center stack">
+        <div class="clock" id="wall-clock">--:--</div>
+        <div class="state-line" id="state-line">Checking…</div>
+      </div>
+      <button id="scan-button" class="scan-button" type="button">Scan to clock in</button>
+      <p class="muted small center" id="scan-hint">
+        Point your phone's camera at the poster at the entrance, or press the button above.
+      </p>
+      <div id="manual-box" class="card hidden stack">
+        <div>
+          <label for="manual-code">Location code</label>
+          <input id="manual-code" class="mono" placeholder="ABCD-EFGH-JKLM"
+                 autocapitalize="characters" autocomplete="off" spellcheck="false">
+        </div>
+        <p class="muted tiny">It is printed under the QR code on the poster.</p>
+        <button id="manual-submit" class="primary" type="button">Use this code</button>
+      </div>
+      <div id="camera-box" class="card hidden stack">
+        <video id="camera-preview" playsinline muted></video>
+        <p class="muted tiny" id="camera-hint">Hold the QR code inside the frame.</p>
+        <button id="camera-cancel" type="button">Cancel</button>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div id="panel-history" class="hidden">
+      <div class="card">
+        <h2>Last 30 days</h2>
+        <p class="muted tiny">You can read this record but not change it. If something is
+          wrong, ask for a correction and a supervisor will review it.</p>
+        <div id="history-list"></div>
+      </div>
+      <div class="card stack">
+        <h2>Ask for a correction</h2>
+        <form id="correction-form" class="stack">
+          <div>
+            <label for="corr-date">Which day</label>
+            <input id="corr-date" type="date" required>
+          </div>
+          <div>
+            <label for="corr-type">What is wrong</label>
+            <select id="corr-type">
+              <option value="add_missing">A scan is missing</option>
+              <option value="amend">A recorded time is wrong</option>
+              <option value="void">An entry should not be there</option>
+            </select>
+          </div>
+          <div id="corr-entry-wrap">
+            <label for="corr-entry">Which scan</label>
+            <select id="corr-entry">
+              <option value="time_in">Time in</option>
+              <option value="time_out">Time out</option>
+            </select>
+          </div>
+          <div id="corr-time-wrap">
+            <label for="corr-time">The correct time</label>
+            <input id="corr-time" type="time" required>
+          </div>
+          <div id="corr-log-wrap" class="hidden">
+            <label for="corr-log">Existing entry</label>
+            <select id="corr-log"></select>
+          </div>
+          <div>
+            <label for="corr-reason">Why (a supervisor reads this)</label>
+            <textarea id="corr-reason" minlength="10" maxlength="500" required
+                      placeholder="e.g. My phone was flat when I left, so my time out was never recorded."></textarea>
+          </div>
+          <button class="primary" type="submit">Send request</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Requests -->
+    <div id="panel-requests" class="hidden">
+      <div class="card">
+        <h2>My correction requests</h2>
+        <div id="requests-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scan result -------------------------------------------------------- -->
+  <section id="view-result" class="hidden">
+    <div class="card center stack">
+      <div class="pill" id="result-kind">Recorded</div>
+      <div class="result-time" id="result-time"></div>
+      <div id="result-detail" class="muted small"></div>
+      <div id="result-notes" class="stack small"></div>
+      <button id="result-done" class="primary" type="button">Done</button>
+    </div>
+  </section>
+
+</main>
+<script src="/static/app/app.js" type="module"></script>
+</body>
+</html>

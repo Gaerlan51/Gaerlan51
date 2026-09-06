@@ -1,0 +1,158 @@
+/* Shared shell for both front-ends. No inline styles anywhere: the
+   Content-Security-Policy is 'self' only, so every rule lives in a file. */
+
+:root {
+  color-scheme: light dark;
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --line: #dce0e6;
+  --ink: #12151a;
+  --ink-soft: #5b6472;
+  --accent: #1d4ed8;
+  --accent-ink: #ffffff;
+  --ok: #12734f;
+  --ok-bg: #e6f5ee;
+  --warn: #8a5a00;
+  --warn-bg: #fdf3dd;
+  --bad: #a11b28;
+  --bad-bg: #fdeaec;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(16, 20, 26, .06), 0 6px 20px rgba(16, 20, 26, .06);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1116;
+    --surface: #171b22;
+    --surface-2: #1f242d;
+    --line: #2b323d;
+    --ink: #e8ecf2;
+    --ink-soft: #99a4b4;
+    --accent: #6a9bff;
+    --accent-ink: #0b0f15;
+    --ok: #6ee7b7;
+    --ok-bg: #0f2b22;
+    --warn: #fbbf76;
+    --warn-bg: #33260f;
+    --bad: #fca5a5;
+    --bad-bg: #3a1418;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .3);
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  line-height: 1.5;
+}
+
+h1, h2, h3 { line-height: 1.25; margin: 0 0 .5rem; }
+h1 { font-size: 1.35rem; }
+h2 { font-size: 1.1rem; }
+h3 { font-size: .95rem; }
+p { margin: 0 0 .75rem; }
+a { color: var(--accent); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.muted { color: var(--ink-soft); }
+.small { font-size: .85rem; }
+.tiny { font-size: .78rem; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.center { text-align: center; }
+.hidden { display: none !important; }
+.stack > * + * { margin-top: .75rem; }
+.row { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.spread { display: flex; gap: .75rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.grow { flex: 1 1 auto; min-width: 0; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+button, .button {
+  font: inherit;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+  padding: .55rem .9rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+button:hover, .button:hover { border-color: var(--ink-soft); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.primary, .button.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+button.danger { background: var(--bad-bg); color: var(--bad); border-color: transparent; }
+button.link { background: none; border: none; color: var(--accent); padding: .25rem; text-decoration: underline; }
+
+label { display: block; font-weight: 600; font-size: .85rem; margin-bottom: .25rem; }
+input, select, textarea {
+  font: inherit;
+  width: 100%;
+  padding: .55rem .65rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+input:focus, select:focus, textarea:focus, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+textarea { min-height: 5rem; resize: vertical; }
+fieldset { border: none; padding: 0; margin: 0 0 .75rem; }
+
+.pill {
+  display: inline-block;
+  padding: .1rem .5rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  background: var(--surface-2);
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.pill.ok { background: var(--ok-bg); color: var(--ok); }
+.pill.warn { background: var(--warn-bg); color: var(--warn); }
+.pill.bad { background: var(--bad-bg); color: var(--bad); }
+
+.notice { border-radius: var(--radius); padding: .75rem .9rem; margin-bottom: 1rem; }
+.notice.ok { background: var(--ok-bg); color: var(--ok); }
+.notice.warn { background: var(--warn-bg); color: var(--warn); }
+.notice.bad { background: var(--bad-bg); color: var(--bad); }
+
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+th, td { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); }
+tbody tr:hover { background: var(--surface-2); }
+.scroll-x { overflow-x: auto; }
+
+/* Two fields that must share a line even when the column is narrow. */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+/* A checkbox and its label read as one line, not as a stacked field. */
+.check { display: flex; align-items: center; gap: .5rem; }
+.check input { width: auto; flex: 0 0 auto; }
+.check label { margin: 0; font-weight: 500; }
+
+.spinner {
+  width: 1rem; height: 1rem; border-radius: 50%;
+  border: 2px solid var(--line); border-top-color: var(--accent);
+  animation: spin .7s linear infinite; display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }

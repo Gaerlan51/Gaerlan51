@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DTR dashboard</title>
+<link rel="icon" href="/static/app/icons/icon-192.png">
+<link rel="stylesheet" href="/static/shared/base.css">
+<link rel="stylesheet" href="/static/admin/admin.css">
+</head>
+<body>
+<div class="layout">
+
+  <div id="banner" class="notice hidden" role="status" aria-live="polite"></div>
+
+  <!-- Sign in ------------------------------------------------------------ -->
+  <section id="view-login">
+    <h1>DTR dashboard</h1>
+    <p class="muted small">Supervisors and HR only. This is a separate sign-in from the
+      employee app, even if you use the same account.</p>
+    <form id="login-form" class="card stack">
+      <div>
+        <label for="login-number">Employee number</label>
+        <input id="login-number" autocomplete="username" autocapitalize="characters" required>
+      </div>
+      <div>
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="primary" type="submit">Sign in</button>
+    </form>
+  </section>
+
+  <!-- Dashboard ---------------------------------------------------------- -->
+  <section id="view-main" class="hidden">
+    <header class="topbar">
+      <h1 id="org-name">DTR dashboard</h1>
+      <span class="grow"></span>
+      <span class="small muted"><span id="live-dot" class="live-dot"></span> <span id="live-label">connecting…</span></span>
+      <span class="small muted" id="who"></span>
+      <button id="sign-out" class="link" type="button">Sign out</button>
+    </header>
+
+    <nav class="sections">
+      <button data-section="live" aria-current="true" type="button">Live</button>
+      <button data-section="approvals" type="button">Approvals <span id="approvals-badge" class="pill hidden"></span></button>
+      <button data-section="reports" type="button">Reports</button>
+      <button data-section="people" type="button">People</button>
+      <button data-section="locations" type="button">Locations</button>
+      <button data-section="audit" type="button">Audit</button>
+    </nav>
+
+    <!-- Live -->
+    <div id="section-live">
+      <div class="counts" id="counts"></div>
+      <div class="two-col">
+        <div class="card">
+          <div class="spread">
+            <h2>Today <span class="muted small" id="board-date"></span></h2>
+            <input id="board-filter" class="grow" placeholder="Filter by name or department">
+          </div>
+          <div class="scroll-x">
+            <table>
+              <thead><tr>
+                <th>Employee</th><th>Department</th><th>Shift</th>
+                <th>In</th><th>Out</th><th>Late</th><th>State</th>
+              </tr></thead>
+              <tbody id="board-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Needs a look</h2>
+          <p class="muted tiny">Flagged scans and days that were never closed, last 7 days.</p>
+          <div id="anomalies"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approvals -->
+    <div id="section-approvals" class="hidden">
+      <div class="card">
+        <h2>Correction requests</h2>
+        <p class="muted tiny">Approving never edits the original entry. It records a new one and
+          links the old to it, so both stay visible in the audit trail.</p>
+        <div id="approvals"></div>
+      </div>
+    </div>
+
+    <!-- Reports -->
+    <div id="section-reports" class="hidden">
+      <div class="card">
+        <h2>Report</h2>
+        <div class="filters">
+          <div><label for="rep-start">From</label><input id="rep-start" type="date"></div>
+          <div><label for="rep-end">To</label><input id="rep-end" type="date"></div>
+          <div><label for="rep-dept">Department</label><input id="rep-dept" placeholder="All"></div>
+          <div><label for="rep-employee">Employee</label><select id="rep-employee"></select></div>
+          <div class="row">
+            <button id="rep-run" class="primary" type="button">Run</button>
+            <button id="rep-csv" type="button">Export CSV</button>
+          </div>
+        </div>
+        <h3>Totals</h3>
+        <div class="scroll-x">
+          <table>
+            <thead><tr>
+              <th>Employee</th><th>Dept</th><th>Hours</th><th>Present</th><th>Absent</th>
+              <th>Open days</th><th>Late (min)</th><th>Under (min)</th><th>Over (min)</th>
+            </tr></thead>
+            <tbody id="rep-totals"></tbody>
+          </table>
+        </div>
+        <h3>Daily detail</h3>
+        <div class="scroll-x">
+          <table>
+            <thead><tr>
+              <th>Date</th><th>Employee</th><th>In</th><th>Out</th><th>Hours</th>
+              <th>Late</th><th>Status</th><th>Flags</th>
+            </tr></thead>
+            <tbody id="rep-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- People -->
+    <div id="section-people" class="hidden">
+      <div class="two-col">
+        <div class="card">
+          <h2>Employees</h2>
+          <div class="scroll-x">
+            <table>
+              <thead><tr>
+                <th>Number</th><th>Name</th><th>Dept</th><th>Role</th>
+                <th>Phone</th><th>Status</th><th></th>
+              </tr></thead>
+              <tbody id="people-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card stack" id="add-person-card">
+          <h2>Add an employee</h2>
+          <form id="person-form" class="stack">
+            <div><label for="p-number">Employee number</label><input id="p-number" required></div>
+            <div><label for="p-name">Full name</label><input id="p-name" required></div>
+            <div><label for="p-dept">Department</label><input id="p-dept"></div>
+            <div><label for="p-role">Role</label>
+              <select id="p-role">
+                <option value="employee">Employee</option>
+                <option value="supervisor">Supervisor</option>
+                <option value="admin">Admin / HR</option>
+              </select>
+            </div>
+            <div><label for="p-shift">Shift</label><select id="p-shift"></select></div>
+            <div><label for="p-password">Temporary password</label><input id="p-password" required minlength="8"></div>
+            <p class="muted tiny">They will be asked to change it. Hand it over in person, not by message.</p>
+            <button class="primary" type="submit">Add</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Locations -->
+    <div id="section-locations" class="hidden">
+      <div class="two-col">
+        <div id="locations-list"></div>
+        <div class="card stack">
+          <h2>Add a location</h2>
+          <form id="location-form" class="stack">
+            <div><label for="l-name">Name</label><input id="l-name" required placeholder="Front entrance"></div>
+            <div class="split">
+              <div><label for="l-lat">Latitude</label><input id="l-lat" required inputmode="decimal"></div>
+              <div><label for="l-lng">Longitude</label><input id="l-lng" required inputmode="decimal"></div>
+            </div>
+            <button id="l-here" type="button">Use my current position</button>
+            <div><label for="l-radius">Radius in metres</label><input id="l-radius" type="number" value="75" min="20" max="500"></div>
+            <div><label for="l-accuracy">Reject fixes worse than (m)</label><input id="l-accuracy" type="number" value="100" min="20" max="500"></div>
+            <div class="check"><input id="l-photo" type="checkbox"><label for="l-photo">Require a photo at scan</label></div>
+            <p class="muted tiny">Photo capture is off unless you tick this. Tell staff before you turn it on —
+              the notice in the app has to be accepted first.</p>
+            <button class="primary" type="submit">Add location</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audit -->
+    <div id="section-audit" class="hidden">
+      <div class="card">
+        <h2>Audit trail</h2>
+        <p class="muted tiny">Append-only. Nothing in this table, or in the time records it describes,
+          can be edited or deleted by anyone using this system.</p>
+        <div class="filters">
+          <div><label for="au-type">Entity</label>
+            <select id="au-type">
+              <option value="">All</option>
+              <option value="dtr_log">Time entries</option>
+              <option value="employee">Employees</option>
+              <option value="location">Locations</option>
+              <option value="correction_request">Corrections</option>
+              <option value="login">Sign-ins</option>
+              <option value="scan">Rejected scans</option>
+              <option value="report">Exports</option>
+            </select>
+          </div>
+          <div><button id="au-run" type="button">Show</button></div>
+        </div>
+        <div class="scroll-x">
+          <table>
+            <thead><tr><th>When</th><th>Who</th><th>Entity</th><th>Action</th><th>Before</th><th>After</th><th>Reason</th></tr></thead>
+            <tbody id="audit-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script src="/static/admin/admin.js" type="module"></script>
+</body>
+</html>

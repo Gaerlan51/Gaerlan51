@@ -1,0 +1,37 @@
+# DTR settings. Nothing secret belongs in this file — it is committed.
+# Put the signing key and anything else private in config/dtr.local.toml
+# (gitignored) or in DTR_* environment variables, which win over both.
+
+[app]
+organisation = "Your Company"
+timezone = "Asia/Manila"
+# Must match how staff reach the system, because it is baked into the printed
+# QR posters. Change it and reprint them.
+base_url = "http://localhost:8000"
+
+[scan]
+# Refuse a fix wider than this, in metres. Consumer phones manage 5–20 m
+# outdoors and 20–60 m indoors; 100 m is a generous ceiling, not a target.
+max_gps_accuracy_m = 100.0
+# Refuse a position the phone cached more than this many seconds ago.
+max_fix_age_seconds = 90
+# Two scans closer together than this are a double-tap, not two punches.
+duplicate_scan_seconds = 60
+# Selfie capture ships built but dormant. This only makes it *available*;
+# each location still has to be switched on individually, and the employee
+# has to accept the photo notice first.
+photo_capture_available = true
+consent_version = "2026-01-PH-DPA"
+
+[security]
+# Minutes. The dashboard session is short on purpose.
+employee_session_minutes = 20160
+admin_session_minutes = 480
+
+[retention]
+# Philippines: employment records must be kept at least three years
+# (Labor Code, Art. 306 / Book III Rule X). The code refuses anything lower.
+# Confirm the figure for your own situation before you rely on it.
+retention_days = 1095
+# Scan photos age out sooner than the time records they are attached to.
+photo_retention_days = 90

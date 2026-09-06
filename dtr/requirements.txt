@@ -1,0 +1,8 @@
+# The DTR web application. The rules underneath it — scanning, geofencing,
+# hours, corrections, the append-only guarantees — are standard library only,
+# and `python -m unittest discover` exercises all of them without installing
+# any of this.
+fastapi>=0.110
+uvicorn[standard]>=0.27
+python-multipart>=0.0.9
+segno>=1.6

@@ -1,9 +1,11 @@
-# Client personal data — never commit. See prompts/operator-notes.md.
+# Client personal data, and the DTR database, scan photos and signing key.
+# Never commit. See prompts/operator-notes.md and specs/dtr-spec.md.
 data/
 out/
 
-# Real prices and payment details.
+# Real prices and payment details, and DTR secrets.
 config/services.local.toml
+config/dtr.local.toml
 
 # Python
 __pycache__/
