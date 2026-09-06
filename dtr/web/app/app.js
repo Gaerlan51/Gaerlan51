@@ -534,6 +534,23 @@ $("correction-form").addEventListener("submit", async (event) => {
   }
 });
 
+/* Scanning the poster while the app is already open does not reload the page —
+ * the browser (or the installed PWA) just changes the fragment and focuses the
+ * existing window. Without this the employee sees nothing happen and concludes
+ * the system is broken. */
+window.addEventListener("hashchange", async () => {
+  const queued = payloadFromHash();
+  if (!queued) return;
+  history.replaceState(null, "", location.pathname);
+  if (state.me && state.me.consent_location && !state.me.must_change_password) {
+    clearBanner();
+    await doScan(queued);
+    return;
+  }
+  sessionStorage.setItem("dtr.pendingPayload", queued);
+  await start();
+});
+
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").catch(() => {});
 }

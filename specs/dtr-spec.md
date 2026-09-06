@@ -101,7 +101,9 @@ plainly right: it ships today and updates instantly.
 The scan flow deliberately avoids shipping a QR decoder. The poster encodes a URL into the app with
 the payload in the fragment, so the **phone's own camera app** does the reading — which every iOS
 and Android phone can do. In-app scanning via `BarcodeDetector` is offered where it exists, and
-typing the printed code is the last resort. Nothing is loaded from a CDN; the
+typing the printed code is the last resort. The app acts on the payload both on load
+and on `hashchange`, because scanning while the app is already open focuses the existing
+window rather than reloading it. Nothing is loaded from a CDN; the
 Content-Security-Policy is `'self'` with no `unsafe-inline`, which is why there is not one inline
 style or event handler in the markup.
 
