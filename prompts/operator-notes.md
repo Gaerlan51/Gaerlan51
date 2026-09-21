@@ -5,12 +5,19 @@ These are notes for **you**, the business owner. They are deliberately kept out 
 can be pasted whole into a Claude Project without carrying meta-commentary into the model's
 instructions.
 
+This file covers the **stats consulting** system. A second, independent system lives in the same
+folder — a clinic scheduling and follow-up assistant — with its own notes in
+[`clinic-operator-notes.md`](clinic-operator-notes.md). The two share nothing but this repo and the
+same house rule: the prompt file is pasteable, the notes file never is.
+
 ## What's in this repo
 
 | Path | What it is |
 |---|---|
 | `prompts/stats-consulting-master-prompt.md` | The system prompt. Paste into Claude Project → Custom Instructions. |
 | `prompts/operator-notes.md` | This file. Never pasted into the prompt. |
+| `prompts/clinic-ops-master-prompt.md` | Separate system: the clinic scheduling assistant prompt. Paste into its own Claude Project. |
+| `prompts/clinic-operator-notes.md` | Notes for the clinic prompt — assumptions, what stays human, what to connect. Never pasted. |
 | `config/services.toml` | Service menu structure, committed, **prices left as placeholders**. |
 | `config/services.local.toml` | Your real prices. **Untracked — never committed.** |
 | `specs/ops-toolkit-spec.md` | Build spec for the toolkit. Kept as the record of what was built and why. |
