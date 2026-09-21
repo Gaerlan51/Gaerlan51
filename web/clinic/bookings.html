@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Booking requests — [CLINIC NAME]</title>
+<meta name="description" content="Incoming booking requests, the slots the assistant proposes, and the ones it escalates.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<link rel="stylesheet" href="assets/clinic.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="sidenav" aria-label="Clinic sections">
+    <a class="sidenav__brand" href="./index.html" style="text-decoration: none;">
+      <span class="b">[CLINIC NAME]</span>
+      <span class="s">Front desk</span>
+    </a>
+    <div class="sidenav__links">
+      <a class="navlink" href="./today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Today</a>
+      <a class="navlink" href="./bookings.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Bookings<span class="navlink__badge navlink__badge--alert">3</span></a>
+      <a class="navlink" href="./messages.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages</a>
+      <a class="navlink" href="./records.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h5l2 3h9v11H4z"/></svg>Records</a>
+      <a class="navlink" href="./certificate.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>Documents<span class="navlink__badge">2</span></a>
+    </div>
+    <div class="sidenav__user">
+      <span class="av" aria-hidden="true">AR</span>
+      <span><span class="n">A. Reyes</span><br><span class="r">Front desk</span></span>
+    </div>
+  </nav>
+  <main class="view" id="main">
+    <div class="view__head">
+      <div>
+        <h1>Booking requests</h1>
+        <p class="view__sub">3 waiting · the assistant proposes, you confirm</p>
+      </div>
+      <div class="view__tools">
+        <span class="tag tag--proto">Prototype · sample data</span>
+      </div>
+    </div>
+
+    <div class="tabs" data-requests role="tablist" aria-label="Waiting requests">
+      <button class="tab" type="button" role="tab" data-request="routine" aria-selected="true">A. Dela Cruz <span>· acupuncture</span></button>
+      <button class="tab tab--bad" type="button" role="tab" data-request="escalated" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4"/><path d="M12 17.4v.01"/></svg> Escalated <span>· chest tightness</span></button>
+      <span class="tab tab--static">R. Bautista · confirm</span>
+    </div>
+
+    <div class="cols cols--wide-right">
+      <section class="panel">
+        <div class="panel__head">
+          <span class="panel__hint">Messenger · today, 8:42 AM</span>
+        </div>
+
+        <div data-request-panel="routine">
+          <p class="note" style="font-family: var(--body); font-size: var(--step-0); line-height: 1.62;">Hi po, good morning. Pwede po magpa-acupuncture this week? Yung lower back ko po, masakit since last month. Thursday or Friday afternoon sana.</p>
+        </div>
+        <div data-request-panel="escalated" hidden>
+          <p class="note" style="font-family: var(--body); font-size: var(--step-0); line-height: 1.62;">Hello po. My father is 68. Since kaninang umaga he has chest tightness and he is sweating. Pwede po ba kami pumunta this afternoon for acupuncture?</p>
+        </div>
+
+        <div class="draft__head" style="margin: .4rem 0 0;">
+          <span class="tag">Assistant</span>
+          <span class="panel__hint">Read from the message · nothing inferred</span>
+        </div>
+
+        <div class="draft" style="padding: .25rem 1rem;">
+          <div data-request-panel="routine">
+            <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Patient</span><span class="appt__b">A. Dela Cruz · returning · last visit 14 Aug</span></div>
+            <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Appointment</span><span class="appt__b">Acupuncture session · 60 min</span></div>
+            <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Window</span><span class="appt__b">Thursday or Friday, afternoon</span></div>
+          </div>
+          <div data-request-panel="escalated" hidden>
+            <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Patient</span><span class="appt__b">New · the sender's father, 68</span></div>
+            <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Appointment</span><span class="appt__b">Requested acupuncture — not assessed</span></div>
+            <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Window</span><span class="appt__b">This afternoon</span></div>
+          </div>
+          <div class="appt" style="background: none; padding-inline: 0; border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Contact number</span><span class="appt__b" style="color: var(--draft-ink);">Not in the message — ask the patient</span></div>
+        </div>
+
+        <div class="panel__foot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.01"/></svg>
+          <span>The assistant fills only what the patient actually wrote. Blanks stay blank.</span>
+        </div>
+      </section>
+
+      <div class="stack">
+        <div data-request-panel="routine">
+          <div class="stack">
+            <section class="panel">
+              <div class="panel__head">
+                <h2>Three open slots that fit</h2>
+                <span class="panel__hint">Checked against [CONNECT: calendar]</span>
+              </div>
+
+              <div class="stack" style="gap: .6rem;" data-slots>
+                <button class="pick" type="button" data-slot="a" aria-pressed="true" data-summary="Thu 25 Sep · 2:00 – 3:00 PM · Dr. J. Ocampo · Room 2">
+                  <span class="pick__dot" aria-hidden="true"></span>
+                  <span class="pick__b"><strong>Thu 25 Sep · 2:00 – 3:00 PM</strong><span>Dr. J. Ocampo · Room 2</span></span>
+                  <span class="pick__k">60 min</span>
+                </button>
+                <button class="pick" type="button" data-slot="b" aria-pressed="false" data-summary="Thu 25 Sep · 4:00 – 5:00 PM · Dr. J. Ocampo · Room 2">
+                  <span class="pick__dot" aria-hidden="true"></span>
+                  <span class="pick__b"><strong>Thu 25 Sep · 4:00 – 5:00 PM</strong><span>Dr. J. Ocampo · Room 2</span></span>
+                  <span class="pick__k">60 min</span>
+                </button>
+                <button class="pick" type="button" data-slot="c" aria-pressed="false" data-summary="Fri 26 Sep · 3:30 – 4:30 PM · Dr. M. Salvador · Room 1">
+                  <span class="pick__dot" aria-hidden="true"></span>
+                  <span class="pick__b"><strong>Fri 26 Sep · 3:30 – 4:30 PM</strong><span>Dr. M. Salvador · Room 1</span></span>
+                  <span class="pick__k">60 min</span>
+                </button>
+              </div>
+
+              <div class="panel__foot" style="border: 0; padding: 0; margin: 0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                <span>10-minute buffer applied either side. No slot shown here is double-booked.</span>
+              </div>
+            </section>
+
+            <section class="panel">
+              <span class="panel__hint">Selected</span>
+              <p style="font-size: var(--step-1); font-weight: 600; margin-top: -.5rem;" id="chosen-slot">Thu 25 Sep · 2:00 – 3:00 PM · Dr. J. Ocampo · Room 2</p>
+              <div class="tabs">
+                <button class="btn btn--primary" type="button">Confirm booking</button>
+                <button class="btn btn--outline" type="button">Offer all three to patient</button>
+                <button class="btn btn--quiet" type="button">Escalate</button>
+              </div>
+              <div class="panel__foot">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                <span>First visit — intake form flagged. Nothing is written to the calendar until you confirm.</span>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div data-request-panel="escalated" hidden>
+          <section class="panel" style="border-color: var(--draft-line);">
+            <div class="pract">
+              <span class="av" style="background: var(--draft-soft); color: var(--draft-ink); width: 2.125rem; height: 2.125rem;" aria-hidden="true">!</span>
+              <span>
+                <span class="n" style="color: var(--draft-ink); font-size: var(--step-2); font-family: var(--display);">Stopped — no slots offered</span><br>
+                <span class="r">Flagged 8:51 AM · waiting on a person for 12 minutes</span>
+              </span>
+            </div>
+
+            <p>This message describes symptoms that may need urgent care. The assistant does not triage and does not decide whether something is an emergency — so it booked nothing, replied nothing, and handed the request to you.</p>
+
+            <div class="stack" style="gap: .55rem; background: var(--paper); border-radius: var(--radius); padding: 1rem 1.1rem;">
+              <div class="checkrow"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12 5 5L20 6"/></svg></span><span class="t">Alerted [FILL: on-call staff] and pinned to Today</span></div>
+              <div class="checkrow"><span class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></span><span class="t">Did not offer slots, book, or reply</span></div>
+            </div>
+
+            <div>
+              <div class="draft__head"><span class="tag">Draft reply</span><span class="panel__hint">For you to read, edit and send</span></div>
+              <p class="draft" style="padding: 1rem 1.1rem; font-size: var(--step-0); line-height: 1.62;">Ma'am, salamat po sa pag-message. Para po sa chest tightness at pawis, huwag po muna kayong pumunta dito — pakidala po agad si Tatay sa pinakamalapit na emergency room, o tumawag po sa [EMERGENCY NUMBER]. Tatawagan po namin kayo para sa follow-up.</p>
+            </div>
+
+            <div class="tabs">
+              <button class="btn btn--danger" type="button">Send this reply</button>
+              <button class="btn btn--outline" type="button">Call the patient</button>
+            </div>
+
+            <div class="panel__foot">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.01"/></svg>
+              <span>A person sends this. The assistant will not answer a possible emergency on its own, and the draft carries no clinical advice beyond directing the patient to emergency care.</span>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/clinic.js"></script>
+</body>
+</html>

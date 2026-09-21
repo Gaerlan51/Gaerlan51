@@ -18,6 +18,7 @@ same house rule: the prompt file is pasteable, the notes file never is.
 | `prompts/operator-notes.md` | This file. Never pasted into the prompt. |
 | `prompts/clinic-ops-master-prompt.md` | Separate system: the clinic scheduling assistant prompt. Paste into its own Claude Project. |
 | `prompts/clinic-operator-notes.md` | Notes for the clinic prompt — assumptions, what stays human, what to connect. Never pasted. |
+| `web/clinic/` | Static prototype of the clinic system: public site, sign-in, and five staff screens. |
 | `config/services.toml` | Service menu structure, committed, **prices left as placeholders**. |
 | `config/services.local.toml` | Your real prices. **Untracked — never committed.** |
 | `specs/ops-toolkit-spec.md` | Build spec for the toolkit. Kept as the record of what was built and why. |

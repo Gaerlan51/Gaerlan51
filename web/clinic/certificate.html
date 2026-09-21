@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medical certificate — [CLINIC NAME]</title>
+<meta name="description" content="An unsigned certificate draft awaiting a practitioner's signature.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<link rel="stylesheet" href="assets/clinic.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="sidenav" aria-label="Clinic sections">
+    <a class="sidenav__brand" href="./index.html" style="text-decoration: none;">
+      <span class="b">[CLINIC NAME]</span>
+      <span class="s">Front desk</span>
+    </a>
+    <div class="sidenav__links">
+      <a class="navlink" href="./today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Today</a>
+      <a class="navlink" href="./bookings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Bookings<span class="navlink__badge navlink__badge--alert">3</span></a>
+      <a class="navlink" href="./messages.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages</a>
+      <a class="navlink" href="./records.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h5l2 3h9v11H4z"/></svg>Records</a>
+      <a class="navlink" href="./certificate.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>Documents<span class="navlink__badge">2</span></a>
+    </div>
+    <div class="sidenav__user">
+      <span class="av" aria-hidden="true">AR</span>
+      <span><span class="n">A. Reyes</span><br><span class="r">Front desk</span></span>
+    </div>
+  </nav>
+  <main class="view" id="main">
+    <div class="view__head">
+      <div>
+        <h1>Medical certificate</h1>
+        <p class="view__sub">A. Dela Cruz · from the visit of 12 September · drafted 09:06</p>
+      </div>
+      <div class="view__tools">
+        <span class="tag tag--proto">Prototype · sample data</span>
+      </div>
+    </div>
+
+    <div class="cols">
+      <article class="doc">
+        <div class="doc__hatch" aria-hidden="true"></div>
+        <div class="doc__flag">
+          <span class="tag">Draft</span>
+          <span>Not a certificate until Dr. M. Salvador reviews and signs it. Printing and release are disabled.</span>
+        </div>
+        <div class="doc__body">
+          <div class="doc__head">
+            <div>
+              <div class="n">[CLINIC NAME]</div>
+              <div class="a">[CLINIC ADDRESS]<br>[CLINIC PHONE] · [CLINIC EMAIL]</div>
+            </div>
+            <div class="s">CERT NO. [SERIES NO.]<br>22 SEPTEMBER 2026</div>
+          </div>
+
+          <h2 class="doc__title">MEDICAL CERTIFICATE</h2>
+
+          <div class="doc__text">
+            <p>This is to certify that <strong>ANDREA S. DELA CRUZ</strong>, 34 years of age, of <span class="blank">[PATIENT ADDRESS]</span>, was seen and examined at this clinic on <strong>12 September 2026</strong>.</p>
+            <p><strong>Findings:</strong> Lumbar strain, right-sided, with mildly limited flexion.</p>
+            <p><strong>Recommendation:</strong> Rest from work for three (3) days, from 12 September 2026 to 14 September 2026, with a follow-up review thereafter.</p>
+            <p>This certificate is issued upon the request of the patient for whatever legal purpose it may serve.</p>
+          </div>
+
+          <div class="doc__sign">
+            <div class="line"><span class="unsigned">UNSIGNED</span></div>
+            <div class="who">DR. M. SALVADOR</div>
+            <div class="lic">PRC NO. <em>[PRC NUMBER]</em><br>PTR NO. <em>[PTR NUMBER]</em></div>
+          </div>
+        </div>
+      </article>
+
+      <div class="stack">
+        <section class="panel">
+          <div class="panel__head"><h2>Before it can be issued</h2></div>
+          <div class="checklist">
+            <div class="checkrow"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12 5 5L20 6"/></svg></span><span class="t">Details taken from Dr. Salvador's dictated note — nothing added</span></div>
+            <div class="checkrow"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12 5 5L20 6"/></svg></span><span class="t">Clinic template fields present and in order</span></div>
+            <div class="checkrow"><span class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></span><span class="t">PRC and PTR numbers are not on file <span>— the assistant left them blank rather than guessing</span></span></div>
+            <div class="checkrow"><span class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></span><span class="t">Not signed by the practitioner</span></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <button class="btn btn--primary btn--block" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg> Send to Dr. Salvador for review</button>
+
+          <div>
+            <button class="btn btn--block" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Print</button>
+            <p class="panel__hint" style="margin-top: .5rem;">Unsigned documents cannot be printed on clinic letterhead.</p>
+          </div>
+
+          <div>
+            <button class="btn btn--block" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Give to patient</button>
+            <p class="panel__hint" style="margin-top: .5rem;">Release is the practitioner's, not the front desk's and not the assistant's. This control stays off here in every state.</p>
+          </div>
+        </section>
+
+        <section class="draft" style="padding: 1rem 1.1rem;">
+          <div class="draft__head">
+            <span class="ico" style="color: var(--draft-ink);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.01"/></svg></span>
+            <h3 style="font-family: var(--body); font-weight: 600; font-size: var(--step--1); color: var(--draft-ink);">Asked, not assumed</h3>
+          </div>
+          <p class="draft__note">Dr. Salvador's note did not give a review interval. The assistant left the follow-up date out of this certificate and asked him instead of picking a plausible one.</p>
+        </section>
+
+        <p class="panel__hint">Drafted 09:06 by the assistant · viewed by A. Reyes 09:07 · no signature event recorded</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/clinic.js"></script>
+</body>
+</html>

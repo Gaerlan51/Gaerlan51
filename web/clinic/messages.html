@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messages — [CLINIC NAME]</title>
+<meta name="description" content="Reminders and payment nudges waiting to go out.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<link rel="stylesheet" href="assets/clinic.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="sidenav" aria-label="Clinic sections">
+    <a class="sidenav__brand" href="./index.html" style="text-decoration: none;">
+      <span class="b">[CLINIC NAME]</span>
+      <span class="s">Front desk</span>
+    </a>
+    <div class="sidenav__links">
+      <a class="navlink" href="./today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Today</a>
+      <a class="navlink" href="./bookings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Bookings<span class="navlink__badge navlink__badge--alert">3</span></a>
+      <a class="navlink" href="./messages.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages</a>
+      <a class="navlink" href="./records.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h5l2 3h9v11H4z"/></svg>Records</a>
+      <a class="navlink" href="./certificate.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>Documents<span class="navlink__badge">2</span></a>
+    </div>
+    <div class="sidenav__user">
+      <span class="av" aria-hidden="true">AR</span>
+      <span><span class="n">A. Reyes</span><br><span class="r">Front desk</span></span>
+    </div>
+  </nav>
+  <main class="view" id="main">
+    <div class="view__head">
+      <div>
+        <h1>Messages</h1>
+        <p class="view__sub">Every send is logged · no clinical content leaves in an SMS</p>
+      </div>
+      <div class="view__tools">
+        <span class="tag tag--proto">Prototype · sample data</span>
+      </div>
+    </div>
+
+    <div class="cols cols--wide-right">
+      <section class="panel">
+        <div class="tabs">
+          <span class="chip chip--ok" style="background: var(--accent); color: #fff;">Queued · 4</span>
+          <span class="chip">Sent today · 11</span>
+          <span class="chip chip--bad">Failed · 1</span>
+        </div>
+
+        <div class="stack" style="gap: .5rem;" data-queue>
+          <button class="pick" type="button" data-message="payment" aria-pressed="true">
+            <span class="pick__i pick__i--bad" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span class="pick__b"><strong style="font-size: var(--step-0);">Payment reminder</strong><span>J. Torres · balance from 12 Sep session</span></span>
+            <span class="chip chip--bad">Held</span>
+          </button>
+          <button class="pick" type="button" data-message="reminder" aria-pressed="false">
+            <span class="pick__i pick__i--ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span class="pick__b"><strong style="font-size: var(--step-0);">Appointment reminder · 24h</strong><span>A. Dela Cruz · goes out today 2:00 PM</span></span>
+            <span class="chip chip--ok">Queued</span>
+          </button>
+          <div class="pick" style="cursor: default;">
+            <span class="pick__i pick__i--ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span class="pick__b"><strong style="font-size: var(--step-0);">Follow-up nudge · day 5</strong><span>M. Lim · Dr. Salvador advised a follow-up</span></span>
+            <span class="chip chip--ok">Queued</span>
+          </div>
+          <div class="pick" style="cursor: default;">
+            <span class="pick__i pick__i--bad" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span class="pick__b"><strong style="font-size: var(--step-0);">Appointment reminder · 2h</strong><span>L. Navarro · number bounced at 08:02</span></span>
+            <span class="chip chip--bad">Failed</span>
+          </div>
+          <div class="pick" style="cursor: default;">
+            <span class="pick__i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span class="pick__b"><strong style="font-size: var(--step-0);">Appointment reminder · 24h</strong><span>R. Bautista · sent 07:00, delivered</span></span>
+            <span class="chip">Sent</span>
+          </div>
+        </div>
+
+        <div class="panel__foot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="m4 6 8 6 8-6"/></svg>
+          <span>A failed message is flagged, never silently retried — the number on file may be wrong.</span>
+        </div>
+      </section>
+
+      <div class="stack">
+        <section class="panel">
+          <div class="panel__head">
+            <div>
+              <h2 data-message-panel="payment">Payment reminder — J. Torres</h2>
+              <h2 data-message-panel="reminder" hidden>Appointment reminder — A. Dela Cruz</h2>
+              <p class="panel__hint" data-message-panel="payment">Balance outstanding since 12 Sep · first reminder</p>
+              <p class="panel__hint" data-message-panel="reminder" hidden>Sends 24 hours before · a second goes 2 hours before</p>
+            </div>
+            <span class="chip chip--bad" data-message-panel="payment">Held</span>
+            <span class="chip chip--ok" data-message-panel="reminder" hidden>Queued</span>
+          </div>
+
+          <div class="draft__head">
+            <span class="tag">Drafted</span>
+            <span class="panel__hint">From the clinic's template · nothing added</span>
+          </div>
+
+          <p class="draft" style="padding: 1.1rem 1.25rem; font-size: var(--step-0); line-height: 1.68;" data-message-panel="payment">Hi Ms. Torres, this is [CLINIC NAME]. You have an outstanding balance of [AMOUNT] for your follow-up consultation on 12 September. How to pay: <code class="mono" style="background: var(--draft-soft); border: 1px solid var(--draft-line); border-radius: 6px; padding: .1rem .4rem; color: var(--draft-ink); font-size: var(--step--1);">[ADD PAYMENT INSTRUCTIONS BEFORE SENDING.]</code> Salamat po!</p>
+          <p class="draft" style="padding: 1.1rem 1.25rem; font-size: var(--step-0); line-height: 1.68;" data-message-panel="reminder" hidden>Hi Ms. Dela Cruz! Reminder po: your acupuncture session with Dr. Salvador is tomorrow, Thursday 25 September, 2:00 PM at [CLINIC ADDRESS]. Reply R to reschedule or call [CLINIC PHONE]. See you po!</p>
+
+          <div class="tabs" style="gap: 1.4rem;">
+            <span class="panel__hint">Channel · SMS</span>
+            <span class="panel__hint">To · [CONFIRMED NUMBER ON FILE]</span>
+            <span class="panel__hint" data-message-panel="payment">Blocked before send</span>
+            <span class="panel__hint" data-message-panel="reminder" hidden>212 characters · 2 SMS parts</span>
+          </div>
+
+          <div class="notice notice--bad" data-message-panel="payment">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <p><strong>Send is locked.</strong> No payment channel is configured, and the assistant will not write payment details of its own — not from an earlier message, not from anything attached. A person fills this in once, in settings.</p>
+          </div>
+
+          <div class="tabs" style="align-items: center; border-top: 1px solid var(--rule); padding-top: 1rem;">
+            <span data-message-panel="payment">
+              <button class="btn" type="button" disabled><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg> Send blocked</button>
+            </span>
+            <span data-message-panel="reminder" hidden>
+              <button class="btn btn--primary" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg> Approve and queue</button>
+            </span>
+            <button class="btn btn--outline" type="button">Edit wording</button>
+            <span class="panel__hint" data-message-panel="payment">Set a payment channel in settings to unlock this.</span>
+            <span class="panel__hint" data-message-panel="reminder" hidden>Logged with time, recipient and type once it goes.</span>
+          </div>
+        </section>
+
+        <div class="notice notice--info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12 5 5L20 6"/></svg>
+          <p>Checked before every send: no diagnosis, no prescription details, no results — and the balance goes only to the patient's own confirmed number.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/clinic.js"></script>
+</body>
+</html>

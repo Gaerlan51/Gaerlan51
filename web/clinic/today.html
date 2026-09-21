@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Today — [CLINIC NAME]</title>
+<meta name="description" content="The day's schedule, what is open, and what still needs a person.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<link rel="stylesheet" href="assets/clinic.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="sidenav" aria-label="Clinic sections">
+    <a class="sidenav__brand" href="./index.html" style="text-decoration: none;">
+      <span class="b">[CLINIC NAME]</span>
+      <span class="s">Front desk</span>
+    </a>
+    <div class="sidenav__links">
+      <a class="navlink" href="./today.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Today</a>
+      <a class="navlink" href="./bookings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Bookings<span class="navlink__badge navlink__badge--alert">3</span></a>
+      <a class="navlink" href="./messages.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages</a>
+      <a class="navlink" href="./records.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h5l2 3h9v11H4z"/></svg>Records</a>
+      <a class="navlink" href="./certificate.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>Documents<span class="navlink__badge">2</span></a>
+    </div>
+    <div class="sidenav__user">
+      <span class="av" aria-hidden="true">AR</span>
+      <span><span class="n">A. Reyes</span><br><span class="r">Front desk</span></span>
+    </div>
+  </nav>
+  <main class="view" id="main">
+    <div class="view__head">
+      <div>
+        <h1>Today</h1>
+        <p class="view__sub">Tuesday, 22 September · 2 practitioners on · clinic opens 09:00</p>
+      </div>
+      <div class="view__tools">
+        <span class="tag tag--proto">Prototype · sample data</span>
+      </div>
+    </div>
+
+    <div class="notice notice--warn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v6M15 3v6M6 9h12v3a6 6 0 0 1-12 0z"/><path d="M12 18v3"/></svg>
+      <p><strong>[CONNECT: calendar]</strong> and <strong>[CONNECT: payment/POS]</strong> are not wired up. Everything below is sample data — the assistant names what is missing rather than showing a partial dashboard as if it were complete.</p>
+      <a href="#connect">Connect systems</a>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="kpi__l">Appointments</div><div class="kpi__v">14</div><div class="kpi__s">9 done · 5 to come</div></div>
+      <div class="kpi"><div class="kpi__l">Open slots left</div><div class="kpi__v">5</div><div class="kpi__s">3 today · 2 tomorrow AM</div></div>
+      <div class="kpi"><div class="kpi__l">No-show rate · 30d</div><div class="kpi__v">8%</div><div class="kpi__s">6 of 74 booked visits</div></div>
+      <div class="kpi"><div class="kpi__l">Outstanding</div><div class="kpi__v kpi__v--alert">4 balances</div><div class="kpi__s">Amounts need [CONNECT: POS]</div></div>
+    </div>
+
+    <div class="cols">
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Schedule by practitioner</h2>
+          <span class="panel__hint">10-minute buffer applied between sessions</span>
+        </div>
+
+        <div>
+          <div class="pract">
+            <span class="av" aria-hidden="true">MS</span>
+            <span class="n">Dr. M. Salvador</span>
+            <span class="r">Room 1 · TCM</span>
+            <span class="c">7 of 9 booked</span>
+          </div>
+          <div class="meter"><span style="width: 78%;"></span></div>
+        </div>
+
+        <div class="stack" style="gap: .4rem;">
+          <div class="appt"><span class="appt__t">09:00</span><span class="appt__b">J. Torres <span>· Follow-up · 20 min</span></span><span class="chip">Completed</span></div>
+          <div class="appt"><span class="appt__t">10:00</span><span class="appt__b">L. Navarro <span>· Acupuncture · 60 min</span></span><span class="chip chip--bad">No-show</span></div>
+          <div class="appt appt--now"><span class="appt__t">14:00</span><span class="appt__b">A. Dela Cruz <span>· Acupuncture · 60 min</span></span><span class="chip chip--ok">Checked in</span></div>
+        </div>
+
+        <hr class="rule">
+
+        <div>
+          <div class="pract">
+            <span class="av av--alt" aria-hidden="true">JO</span>
+            <span class="n">Dr. J. Ocampo</span>
+            <span class="r">Room 2 · Consultation</span>
+            <span class="c">5 of 8 booked</span>
+          </div>
+          <div class="meter"><span style="width: 62%;"></span></div>
+        </div>
+
+        <div class="stack" style="gap: .4rem;">
+          <div class="appt"><span class="appt__t">15:00</span><span class="appt__b">R. Bautista <span>· New consultation · 45 min</span></span><span class="chip chip--warn">Unconfirmed</span></div>
+          <div class="appt appt--open"><span class="appt__t">16:00</span><span class="appt__b"><span>Open</span></span><a href="./bookings.html">Fill this slot</a></div>
+        </div>
+      </section>
+
+      <div class="stack">
+        <section class="panel">
+          <div class="panel__head">
+            <h2>Needs a person</h2>
+            <span class="chip chip--bad">3</span>
+          </div>
+
+          <div>
+            <div class="attn">
+              <svg style="color: var(--draft-ink);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4"/><path d="M12 17.4v.01"/></svg>
+              <div>
+                <h3 class="bad">Escalated — not booked</h3>
+                <p>A request mentions chest tightness. The assistant stopped and did not offer slots.</p>
+                <a href="./bookings.html">Open the request</a>
+              </div>
+            </div>
+            <div class="attn">
+              <span class="ico" style="color: var(--warn-ink);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+              <div>
+                <h3>Unconfirmed in 19 hours</h3>
+                <p>R. Bautista · new consultation · tomorrow 10:00.</p>
+                <a href="./messages.html">Confirm or chase</a>
+              </div>
+            </div>
+            <div class="attn">
+              <span class="ico" style="color: var(--draft-ink);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M9 9l6 4M15 9l-6 4"/></svg></span>
+              <div>
+                <h3>Reminder failed to send</h3>
+                <p>L. Navarro's number bounced. Not retried — the number on file may be wrong.</p>
+                <a href="./messages.html">Check the number</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel__head">
+            <h2>Drafted, awaiting sign-off</h2>
+          </div>
+          <p class="panel__hint" style="margin-top: -.5rem;">Nothing here has been sent or signed.</p>
+
+          <a class="draft draftlink" href="./certificate.html">
+            <div class="draft__head"><span class="tag">Draft</span><h3>Medical certificate</h3></div>
+            <p>A. Dela Cruz · needs Dr. Salvador's signature</p>
+          </a>
+
+          <a class="draft draftlink" href="./messages.html">
+            <div class="draft__head"><span class="tag">Held</span><h3>Payment reminders · 3</h3></div>
+            <p>Send is locked until payment details are set</p>
+          </a>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/clinic.js"></script>
+</body>
+</html>

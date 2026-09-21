@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff sign in — [CLINIC NAME]</title>
+<meta name="description" content="Front desk and practitioner sign-in for the clinic operations system.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<link rel="stylesheet" href="assets/clinic.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="split">
+  <aside class="split__aside">
+    <a class="split__back" href="./index.html">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      [CLINIC NAME]
+    </a>
+
+    <div class="split__mid">
+      <h1>The day's schedule, and what still needs a person.</h1>
+      <div class="sell">
+        <div class="sell__i">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <div>
+            <h2>Today, by practitioner</h2>
+            <p>Who is in, what is booked, which slots are still open.</p>
+          </div>
+        </div>
+        <div class="sell__i">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <div>
+            <h2>Reminders waiting to go out</h2>
+            <p>Drafted for you, held until someone presses send.</p>
+          </div>
+        </div>
+        <div class="sell__i">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
+          <div>
+            <h2>Documents awaiting a signature</h2>
+            <p>Certificates and prescriptions sit here until a practitioner signs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="split__foot">Patient health information is sensitive personal information under the Data Privacy Act of 2012. Access from this account is logged.</p>
+  </aside>
+
+  <main class="split__main" id="main">
+    <div class="split__top">
+      Not staff?
+      <a href="./index.html#enquire">Request a visit instead</a>
+    </div>
+
+    <form class="form" novalidate>
+      <h1>Sign in</h1>
+      <p>Front desk and practitioner accounts. Your role decides what you can open.</p>
+
+      <div class="field">
+        <label for="li-email">Work email</label>
+        <input id="li-email" type="email" autocomplete="username" placeholder="areyes@[clinic-domain]">
+      </div>
+
+      <div class="field">
+        <div class="field__row">
+          <label for="li-pass">Password</label>
+          <a href="#reset">Forgot password?</a>
+        </div>
+        <div class="pw">
+          <input id="li-pass" type="password" autocomplete="current-password" placeholder="••••••••••">
+          <button type="button" data-pw-toggle="li-pass" aria-label="Show password">
+            <svg data-icon-show viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12s3.6-7 9-7 9 7 9 7-3.6 7-9 7-9-7-9-7z"/><circle cx="12" cy="12" r="2.6"/></svg>
+            <svg data-icon-hide viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.4 5.2A9.6 9.6 0 0 1 12 5c5 0 9 4.5 9 7a11 11 0 0 1-2.4 3.6"/><path d="M6.2 7.1C4.2 8.5 3 10.5 3 12c0 2.5 4 7 9 7 1.3 0 2.5-.3 3.6-.8"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="check" style="margin-top: 1.15rem;">
+        <input id="li-remember" type="checkbox">
+        <label for="li-remember">Trust this clinic computer for 30 days</label>
+      </div>
+
+      <a class="btn btn--primary btn--block btn--lg" href="./today.html" style="margin-top: 1.5rem;">Sign in</a>
+
+      <div class="or"><span>Or</span></div>
+
+      <button class="btn btn--outline btn--block btn--lg" type="button" style="margin-top: 1.15rem;">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Use a clinic passkey
+      </button>
+
+      <div class="notice notice--bad" style="margin-top: 1.9rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4"/><path d="M12 17.4v.01"/></svg>
+        <p><strong>Prototype front end.</strong> This form does not check a password, create a session, or connect to an account system — the Sign in button simply opens the dashboard. Do not put it in front of real staff until there is an account system behind it.</p>
+      </div>
+    </form>
+
+    <div class="split__base">
+      <span>Sessions end after [TIMEOUT] of inactivity.</span>
+      <span>[CLINIC NAME] · [CITY]</span>
+    </div>
+  </main>
+</div>
+
+<script src="assets/clinic.js"></script>
+</body>
+</html>

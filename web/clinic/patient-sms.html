@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What the patient receives — [CLINIC NAME]</title>
+<meta name="description" content="The SMS thread a patient actually sees: a time, a place, a practitioner, and a way to reply.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<link rel="stylesheet" href="assets/clinic.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="phonewrap">
+  <main id="main" style="display: grid; gap: 1.75rem; justify-items: center;">
+
+    <div class="phone">
+      <div class="phone__head">
+        <span class="av" aria-hidden="true">CN</span>
+        <span>
+          <span class="n">[CLINIC NAME]</span>
+          <span class="p">[CLINIC PHONE]</span>
+        </span>
+      </div>
+
+      <div class="thread">
+        <p class="thread__day">Wednesday, 24 September</p>
+
+        <div class="bubble bubble--them">
+          <p>Hi Ms. Dela Cruz! Reminder po: your acupuncture session with Dr. Salvador is tomorrow, Thursday 25 September, 2:00 PM at [CLINIC ADDRESS]. Reply R to reschedule or call [CLINIC PHONE]. See you po!</p>
+          <time>2:00 PM</time>
+        </div>
+
+        <div class="bubble bubble--me">
+          <p>Thank you po! See you tomorrow.</p>
+          <time>2:06 PM</time>
+        </div>
+
+        <p class="thread__day">Thursday, 25 September</p>
+
+        <div class="bubble bubble--them">
+          <p>Good morning po! Your session is at 2:00 PM today with Dr. Salvador, Room 1. Please come 10 minutes early.</p>
+          <time>12:00 PM</time>
+        </div>
+
+        <p class="thread__day">Tuesday, 30 September</p>
+
+        <div class="bubble bubble--them">
+          <p>Hi Ms. Dela Cruz — Dr. Salvador recommended a follow-up session. Reply or call [CLINIC PHONE] to book a slot. — [CLINIC NAME]</p>
+          <time>9:30 AM</time>
+        </div>
+      </div>
+
+      <div class="phone__compose">
+        <span class="box">Text message</span>
+        <span class="send" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <div class="notice notice--info" style="max-width: 30rem;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.01"/></svg>
+      <p>No diagnosis, no prescription detail, no results. A reminder carries a time, a place, a practitioner and a way to reply — and that is the whole of it. The follow-up nudge is phrased as a scheduling prompt, never as medical advice.</p>
+    </div>
+
+    <p class="panel__hint"><a href="./today.html">Back to the front desk</a></p>
+  </main>
+</div>
+
+<script src="assets/clinic.js"></script>
+</body>
+</html>

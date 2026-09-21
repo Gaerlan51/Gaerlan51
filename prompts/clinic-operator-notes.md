@@ -83,6 +83,37 @@ none of those belong in this repo at any point. If the clinic system grows past 
 it to a private repo first — `scripts/move-to-private.sh` does the equivalent move for the
 consulting toolkit and is a usable template.
 
+## The prototype site
+
+`web/clinic/` is a working static prototype of the whole system — eight pages, one stylesheet, one
+script, no build step and no dependencies. Run it locally from the repo root:
+
+```sh
+python3 -m http.server 8000 --directory web
+# then open http://localhost:8000/clinic/
+```
+
+| Page | What it shows |
+|---|---|
+| `index.html` | The public site: treatments, how booking works, practitioners, the privacy section, FAQ, enquiry form. |
+| `login.html` | Staff sign-in. A front end only — it checks nothing and stores nothing, and says so on the page. |
+| `today.html` | The dashboard: schedule by practitioner, open slots, no-show rate, what needs a person. |
+| `bookings.html` | A routine request with three proposed slots, and an escalated one where the assistant offers none. |
+| `messages.html` | The reminder queue, including a payment reminder whose send button is locked. |
+| `records.html` | A visit summary shown beside the practitioner's original dictated note. |
+| `certificate.html` | An unsigned certificate draft, with print and release disabled. |
+| `patient-sms.html` | The same system from the patient's phone. |
+
+Two conventions carry the whole human-checkpoint rule visually, so keep them if you edit the pages:
+a **dashed clay outline** means the assistant drafted it and nobody has approved it yet, and
+**anything in square brackets** — `[CLINIC NAME]`, `[PRC NUMBER]`, `[AMOUNT]` — is a value you fill
+in once. The screens deliberately show the assistant leaving those blank rather than inventing a
+plausible one.
+
+It is a prototype, not a product: the data is invented, nothing persists, and the two forms send
+nowhere. `vercel.json` already points Vercel at `web/`, so it deploys at `/clinic` with no
+configuration — but read the sign-in warning above before you put that link anywhere.
+
 ## Next steps — every `[CONNECT: ...]` needs a real system
 
 The prompt works as-is for drafting and reasoning tasks. But until each `[CONNECT:]` placeholder
