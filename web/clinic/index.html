@@ -281,7 +281,8 @@
         </dl>
       </div>
 
-      <form class="enquiry__form" id="enquiry" novalidate>
+      <form class="enquiry__form" id="enquiry" action="[FORM ENDPOINT]" method="post" novalidate>
+        <p class="vh" aria-hidden="true"><label for="enq-website">Leave this blank</label><input id="enq-website" name="website" type="text" tabindex="-1" autocomplete="off"></p>
         <div class="enquiry__grid">
           <div class="field">
             <label for="enq-name">Your name</label>
@@ -322,14 +323,14 @@
           <label for="enq-consent">I agree that Dr. Inciong's Clinic may contact me about this request and hold my details as described in the privacy notice.</label>
         </div>
         <div class="enquiry__foot">
-          <button class="btn btn--primary btn--lg" type="submit">Compose my enquiry</button>
-          <p>Replies within clinic hours. We will confirm the city as well as the time. For emergencies, call [EMERGENCY NUMBER].</p>
+          <button class="btn btn--primary btn--lg" type="submit">Send my request</button>
+          <p>This is a request, not a booking — a person replies with open slots and confirms the city. For emergencies, call [EMERGENCY NUMBER].</p>
         </div>
 
-        <div class="readout" id="readout" hidden>
-          <p class="panel__hint">This form does not send. Copy the block below and send it to [CLINIC EMAIL] or [CLINIC PHONE] — the labels are the ones the front desk expects.</p>
-          <pre id="readout-text"></pre>
-          <button class="btn btn--outline" type="button" id="copy" style="margin-top: .75rem;">Copy</button>
+        <div class="readout" id="readout" role="status" hidden>
+          <p class="panel__hint" id="readout-lead"></p>
+          <pre id="readout-text" hidden></pre>
+          <button class="btn btn--outline" type="button" id="copy" style="margin-top: .75rem;" hidden>Copy</button>
         </div>
       </form>
     </div>

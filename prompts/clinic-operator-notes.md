@@ -124,9 +124,66 @@ a name that is always spelled out.
 The real details still to fill in are the two addresses, the phone and email, clinic hours, and
 Dr. Inciong's PRC and PTR numbers. Search the folder for `[` to find every one.
 
-It is a prototype, not a product: the data is invented, nothing persists, and the two forms send
-nowhere. `vercel.json` already points Vercel at `web/`, so it deploys at `/clinic` with no
+It is a prototype, not a product: the data is invented and nothing persists. The sign-in form is a
+front end only; the enquiry form sends once you give it an endpoint (below). `vercel.json` already points Vercel at `web/`, so it deploys at `/clinic` with no
 configuration — but read the sign-in warning above before you put that link anywhere.
+
+## Putting it online, and letting patients book
+
+### 1. A public address
+
+`vercel.json` already points Vercel at `web/`, so there is nothing to configure — but Vercel builds
+whatever branch you tell it to, and this work is on a feature branch. Either merge it into `main`
+first, or point the Vercel project at the branch. Then: vercel.com → sign in with GitHub → **Add New
+→ Project** → import this repository → **Deploy**. The clinic site lands at
+`<project>.vercel.app/clinic`, and every push redeploys it.
+
+A custom domain goes under the project's **Domains** tab; Vercel issues the HTTPS certificate
+itself. Until you have one, the `.vercel.app` address is a perfectly good thing to put in a
+Messenger bio.
+
+### 2. Making the enquiry form actually send
+
+The form posts to whatever is in its `action`, and it is currently the literal placeholder
+`[FORM ENDPOINT]` — so the page composes a copyable block instead and **says on screen that it does
+not send**. That is deliberate: a contact form that silently swallows a patient's request is worse
+than no form.
+
+To switch it on, sign up for any form relay that accepts a POSTed form and emails it to you —
+Formspree, Web3Forms and Getform all have free tiers and need no backend — and replace the
+placeholder in `web/clinic/index.html`:
+
+```html
+<form class="enquiry__form" id="enquiry" action="https://formspree.io/f/xxxxxxx" method="post" novalidate>
+```
+
+Nothing else changes. The form then posts, confirms inline, and clears itself; if the relay is down
+it falls back to the copy block rather than losing what the patient typed. A honeypot field catches
+most bots. **Consent and privacy:** patients are typing health-adjacent details into a third party,
+so check that relay's data-handling terms and make sure the consent line on the form matches what
+you actually do with it.
+
+### 3. Can a patient book their own slot?
+
+**Not from this site, and not by accident.** The form puts a *request* in front of a person; the
+front desk replies with real openings and confirms the city. That is the design in §1 of the master
+prompt, and there are good reasons for it: new versus returning patients need different slot
+lengths, symptoms sometimes need triage before a booking, and the rotation means half the weeks in
+any month are the wrong city for a given patient.
+
+If you do want true self-serve booking — patient picks a slot and it is confirmed on the spot — do
+not build it here. Use a booking tool and embed it:
+
+- **Cal.com** (open source, free tier) or **Calendly**. Create two event types, *Consultation — Las
+  Piñas* and *Consultation — Cagayan de Oro*, and give each availability only on its own weeks.
+- The rotation is the part that needs care: whichever tool you pick, **you are now maintaining the
+  alternating weeks in two places** — the tool and this site's calendar — and they will drift. Pick
+  one to be the source of truth and regenerate the other from it.
+- Keep the emergency line and the "this is not urgent care" answer visible on the booking step. A
+  self-serve flow removes the person who would otherwise have noticed.
+
+The honest sequence is: get the form sending (an afternoon), see how many enquiries actually arrive,
+and only then decide whether self-serve booking is worth the rotation bookkeeping.
 
 ## Next steps — every `[CONNECT: ...]` needs a real system
 

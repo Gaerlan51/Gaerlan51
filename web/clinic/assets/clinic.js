@@ -4,10 +4,10 @@
    of it: the password reveal, the booking screen's two request paths, the
    message queue's preview, and the enquiry composer.
 
-   Nothing here sends anything anywhere. The enquiry form composes a block the
-   visitor copies; the sign-in form never reads the password field. Both say so
-   on the page rather than in a comment, because a form that looks like it works
-   and doesn't is worse than one that admits it. */
+   The sign-in form never reads the password field and says so on the page. The
+   enquiry form sends only once a real endpoint is filled in, and says which of
+   the two it is doing — because a form that looks like it works and doesn't is
+   worse than one that admits it. */
 (function () {
   "use strict";
 
@@ -75,12 +75,25 @@
     group(queue, "data-message", function (value) { showOnly("message-panel", value); });
   }
 
-  /* --- enquiry composer --------------------------------------------------- */
+  /* --- enquiry form ------------------------------------------------------- */
+  /* Two modes, decided by whether the form's action is still a placeholder.
+
+     Unconfigured: the form composes a labelled block the visitor copies and
+     sends themselves, and says plainly that it does not send. Configured with
+     a relay endpoint (Formspree, Web3Forms, Getform — anything that accepts a
+     POSTed FormData and emails it on): it posts and confirms inline.
+
+     A failed post falls back to the copy block rather than losing what they
+     typed. Nothing here books an appointment — it puts a request in front of a
+     person, which is the whole design. */
   var form = document.getElementById("enquiry");
   var readout = document.getElementById("readout");
   if (form && readout) {
     var block = document.getElementById("readout-text");
     var copy = document.getElementById("copy");
+    var lead = document.getElementById("readout-lead");
+    var action = form.getAttribute("action") || "";
+    var configured = action && action.indexOf("[") === -1;
     var LABELS = [
       ["name", "Name"],
       ["mobile", "Mobile"],
@@ -90,19 +103,57 @@
       ["note", "Notes"]
     ];
 
+    function compose(data) {
+      return LABELS.map(function (pair) {
+        var value = (data.get(pair[0]) || "").toString().trim();
+        return value ? pair[1] + ": " + value : null;
+      }).filter(Boolean).join("\n");
+    }
+
+    function show(leadText, bodyText, showCopy) {
+      if (lead) lead.textContent = leadText;
+      block.textContent = bodyText;
+      block.hidden = !bodyText;
+      if (copy) copy.hidden = !showCopy;
+      readout.hidden = false;
+      readout.scrollIntoView({ block: "nearest" });
+    }
+
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       var data = new FormData(form);
-      var lines = LABELS.map(function (pair) {
-        var value = (data.get(pair[0]) || "").toString().trim();
-        return value ? pair[1] + ": " + value : null;
-      }).filter(Boolean);
 
-      block.textContent = lines.length
-        ? lines.join("\n")
-        : "Fill in at least your name and mobile number, then press the button again.";
-      readout.hidden = false;
-      readout.scrollIntoView({ block: "nearest" });
+      if ((data.get("website") || "").toString()) return;   // honeypot
+
+      var name = (data.get("name") || "").toString().trim();
+      var mobile = (data.get("mobile") || "").toString().trim();
+      if (!name || !mobile) {
+        show("We need a name and a mobile number to reply to.", "", false);
+        return;
+      }
+
+      var text = compose(data);
+
+      if (!configured) {
+        show("This form does not send yet. Copy the block below and send it to the clinic \u2014 the labels are the ones the front desk expects.", text, true);
+        return;
+      }
+
+      var button = form.querySelector('button[type="submit"]');
+      if (button) { button.disabled = true; button.textContent = "Sending\u2026"; }
+
+      fetch(action, { method: "POST", body: data, headers: { Accept: "application/json" } })
+        .then(function (response) {
+          if (!response.ok) throw new Error(response.status);
+          form.reset();
+          show("Salamat po \u2014 your request is with the front desk. You will get a reply with open slots and the city for that week. Nothing is booked until you confirm.", "", false);
+        })
+        .catch(function () {
+          show("That did not send \u2014 sorry po. Copy the block below and send it to the clinic instead, and nothing you typed is lost.", text, true);
+        })
+        .then(function () {
+          if (button) { button.disabled = false; button.textContent = "Send my request"; }
+        });
     });
 
     if (copy) {
