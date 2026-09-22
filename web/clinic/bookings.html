@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Booking requests — [CLINIC NAME]</title>
+<title>Booking requests — Dr. Inciong's Clinic</title>
 <meta name="description" content="Incoming booking requests, the slots the assistant proposes, and the ones it escalates.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,12 +17,12 @@
 <div class="app">
   <nav class="sidenav" aria-label="Clinic sections">
     <a class="sidenav__brand" href="./index.html" style="text-decoration: none;">
-      <span class="b">[CLINIC NAME]</span>
+      <span class="b">Dr. Inciong's Clinic</span>
       <span class="s">Front desk</span>
     </a>
     <div class="sidenav__links">
       <a class="navlink" href="./today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Today</a>
-      <a class="navlink" href="./bookings.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Bookings<span class="navlink__badge navlink__badge--alert">3</span></a>
+      <a class="navlink" href="./bookings.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Bookings<span class="navlink__badge navlink__badge--alert">4</span></a>
       <a class="navlink" href="./messages.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages</a>
       <a class="navlink" href="./records.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h5l2 3h9v11H4z"/></svg>Records</a>
       <a class="navlink" href="./certificate.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>Documents<span class="navlink__badge">2</span></a>
@@ -72,11 +72,13 @@
             <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Patient</span><span class="appt__b">A. Dela Cruz · returning · last visit 14 Aug</span></div>
             <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Appointment</span><span class="appt__b">Acupuncture session · 60 min</span></div>
             <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Window</span><span class="appt__b">Thursday or Friday, afternoon</span></div>
+            <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Clinic</span><span class="appt__b">Las Piñas · from the patient's record</span></div>
           </div>
           <div data-request-panel="escalated" hidden>
             <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Patient</span><span class="appt__b">New · the sender's father, 68</span></div>
             <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Appointment</span><span class="appt__b">Requested acupuncture — not assessed</span></div>
             <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Window</span><span class="appt__b">This afternoon</span></div>
+            <div class="appt" style="background: none; padding-inline: 0; border-bottom: 1px solid var(--draft-line); border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Clinic</span><span class="appt__b">Cagayan de Oro · not a Cagayan de Oro week</span></div>
           </div>
           <div class="appt" style="background: none; padding-inline: 0; border-radius: 0;"><span class="panel__hint" style="width: 6.5rem; flex: none;">Contact number</span><span class="appt__b" style="color: var(--draft-ink);">Not in the message — ask the patient</span></div>
         </div>
@@ -93,36 +95,36 @@
             <section class="panel">
               <div class="panel__head">
                 <h2>Three open slots that fit</h2>
-                <span class="panel__hint">Checked against [CONNECT: calendar]</span>
+                <span class="panel__hint">Las Piñas · checked against [CONNECT: calendar]</span>
               </div>
 
               <div class="stack" style="gap: .6rem;" data-slots>
-                <button class="pick" type="button" data-slot="a" aria-pressed="true" data-summary="Thu 25 Sep · 2:00 – 3:00 PM · Dr. J. Ocampo · Room 2">
+                <button class="pick" type="button" data-slot="a" aria-pressed="true" data-summary="Thu 25 Sep · 2:00 – 3:00 PM · Las Piñas · Room 2">
                   <span class="pick__dot" aria-hidden="true"></span>
-                  <span class="pick__b"><strong>Thu 25 Sep · 2:00 – 3:00 PM</strong><span>Dr. J. Ocampo · Room 2</span></span>
+                  <span class="pick__b"><strong>Thu 25 Sep · 2:00 – 3:00 PM</strong><span>Las Piñas · Room 2</span></span>
                   <span class="pick__k">60 min</span>
                 </button>
-                <button class="pick" type="button" data-slot="b" aria-pressed="false" data-summary="Thu 25 Sep · 4:00 – 5:00 PM · Dr. J. Ocampo · Room 2">
+                <button class="pick" type="button" data-slot="b" aria-pressed="false" data-summary="Thu 25 Sep · 4:00 – 5:00 PM · Las Piñas · Room 2">
                   <span class="pick__dot" aria-hidden="true"></span>
-                  <span class="pick__b"><strong>Thu 25 Sep · 4:00 – 5:00 PM</strong><span>Dr. J. Ocampo · Room 2</span></span>
+                  <span class="pick__b"><strong>Thu 25 Sep · 4:00 – 5:00 PM</strong><span>Las Piñas · Room 2</span></span>
                   <span class="pick__k">60 min</span>
                 </button>
-                <button class="pick" type="button" data-slot="c" aria-pressed="false" data-summary="Fri 26 Sep · 3:30 – 4:30 PM · Dr. M. Salvador · Room 1">
+                <button class="pick" type="button" data-slot="c" aria-pressed="false" data-summary="Mon 5 Oct · 3:30 – 4:30 PM · Las Piñas">
                   <span class="pick__dot" aria-hidden="true"></span>
-                  <span class="pick__b"><strong>Fri 26 Sep · 3:30 – 4:30 PM</strong><span>Dr. M. Salvador · Room 1</span></span>
+                  <span class="pick__b"><strong>Mon 5 Oct · 3:30 – 4:30 PM</strong><span>Las Piñas · Room 1 · the next Las Piñas week</span></span>
                   <span class="pick__k">60 min</span>
                 </button>
               </div>
 
               <div class="panel__foot" style="border: 0; padding: 0; margin: 0;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                <span>10-minute buffer applied either side. No slot shown here is double-booked.</span>
+                <span>Mon 28 Sep – Sat 3 Oct is a Cagayan de Oro week, so it holds no Las Piñas slots at all. The third option jumps it.</span>
               </div>
             </section>
 
             <section class="panel">
               <span class="panel__hint">Selected</span>
-              <p style="font-size: var(--step-1); font-weight: 600; margin-top: -.5rem;" id="chosen-slot">Thu 25 Sep · 2:00 – 3:00 PM · Dr. J. Ocampo · Room 2</p>
+              <p style="font-size: var(--step-1); font-weight: 600; margin-top: -.5rem;" id="chosen-slot">Thu 25 Sep · 2:00 – 3:00 PM · Las Piñas · Room 2</p>
               <div class="tabs">
                 <button class="btn btn--primary" type="button">Confirm booking</button>
                 <button class="btn btn--outline" type="button">Offer all three to patient</button>

@@ -84,6 +84,7 @@
     var LABELS = [
       ["name", "Name"],
       ["mobile", "Mobile"],
+      ["city", "Clinic"],
       ["service", "For"],
       ["when", "Preferred"],
       ["note", "Notes"]

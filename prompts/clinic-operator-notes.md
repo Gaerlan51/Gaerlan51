@@ -11,10 +11,20 @@ coordinator for a consultation / acupuncture clinic: it triages booking requests
 and payment reminders, helps organize patient records, and drafts — never issues — prescriptions and
 medical certificates.
 
-One boundary shapes every section: anything with clinical or legal weight (a diagnosis, a
+Two things shape every section. The first: anything with clinical or legal weight (a diagnosis, a
 prescription, a medical certificate, a released chart note) stops at a licensed practitioner for
 review and signature before it reaches a patient. The assistant's job is to remove typing and
 chasing, not clinical judgment.
+
+The second is the rotation. The clinic is in **Las Piñas one week and Cagayan de Oro the next**,
+so a date is never enough on its own — every slot, confirmation, reminder and certificate carries a
+city, and a week in the wrong city holds no slots for that patient at all. This is not cosmetic: the
+two cities are about 800 km apart, so a booking in the wrong one is not an inconvenience, it is a
+wasted flight. Two places in the system exist only because of it, and both are worth keeping if you
+edit anything: the dashboard leads with which city this week is, and a follow-up nudge names the
+next week in *that patient's* city instead of a generic interval. A note reading "review in 2–3
+weeks" is genuinely ambiguous here — for a Las Piñas patient, two weeks is a Cagayan de Oro week
+and three weeks is not — so the assistant asks rather than picking one.
 
 ## ⚠️ Assumptions this was built on — check these before first use
 
@@ -23,9 +33,9 @@ rewriting from scratch.
 
 | # | Assumption | If it's wrong |
 |---|---|---|
-| 1 | Small clinic, one or a few practitioners; TCM/acupuncture and consultation are **separate service types**. | Edit the appointment types in §1. |
+| 1 | **Dr. Inciong's Clinic**: one practitioner, two cities, alternating whole weeks — Las Piñas one week, Cagayan de Oro the next, Monday to Saturday. TCM/acupuncture and consultation are **separate service types**. | If a second practitioner joins, or the rotation stops being a clean weekly alternation (a two-week block, a skipped week for a holiday), §1 of the prompt and the dashboard both need revising — the current wording assumes the pattern holds. |
 | 2 | Current tools are informal (spreadsheets, messenger, paper charts), so the prompt is **tool-agnostic** with a `[CONNECT: ...]` marker wherever it assumes a calendar, EMR, SMS/email, or payment tool. | If you already run Calendly, Square, QuickBooks etc., the `[CONNECT:]` blocks become real tool-specific instructions. |
-| 3 | Patients can request appointments via chat/website/messaging, but **staff still confirms** conflicts and practitioner assignment — not fully autonomous auto-booking. | If you want full self-serve booking, §1's escalation rules loosen. |
+| 3 | Patients can request appointments via chat/website/messaging, but **staff still confirms** conflicts, city and practitioner assignment — not fully autonomous auto-booking. | If you want full self-serve booking, §1's escalation rules loosen. |
 | 4 | Clinical documents are **drafted only**; a licensed practitioner reviews and signs before issue. There is no auto-send path, and there shouldn't be — an AI unilaterally issuing a clinical/legal document is not something to set up regardless of preference. | Not negotiable in this design. |
 | 5 | Medical records work is **organizing, summarizing, and filing** notes a practitioner already wrote or dictated — never independently generating diagnoses or chart entries. | Not negotiable in this design. |
 | 6 | Jurisdiction is the **Philippines**: compliance is written around the Data Privacy Act of 2012 and NPC guidance on Sensitive Personal Information. | Elsewhere — swap the compliance section entirely. |
@@ -95,20 +105,24 @@ python3 -m http.server 8000 --directory web
 
 | Page | What it shows |
 |---|---|
-| `index.html` | The public site: treatments, how booking works, practitioners, the privacy section, FAQ, enquiry form. |
+| `index.html` | The public site: the rotation calendar, treatments, how booking works, Dr. Inciong, the privacy section, FAQ, enquiry form. |
 | `login.html` | Staff sign-in. A front end only — it checks nothing and stores nothing, and says so on the page. |
-| `today.html` | The dashboard: schedule by practitioner, open slots, no-show rate, what needs a person. |
-| `bookings.html` | A routine request with three proposed slots, and an escalated one where the assistant offers none. |
+| `today.html` | The dashboard: this week's city and next week's, the schedule, open slots, no-show rate, what needs a person. |
+| `bookings.html` | A routine request whose three slots skip the other city's week, and an escalated one where the assistant offers none. |
 | `messages.html` | The reminder queue, including a payment reminder whose send button is locked. |
 | `records.html` | A visit summary shown beside the practitioner's original dictated note. |
 | `certificate.html` | An unsigned certificate draft, with print and release disabled. |
-| `patient-sms.html` | The same system from the patient's phone. |
+| `patient-sms.html` | The same system from the patient's phone, including a nudge that names the next week in their city. |
 
 Two conventions carry the whole human-checkpoint rule visually, so keep them if you edit the pages:
 a **dashed clay outline** means the assistant drafted it and nobody has approved it yet, and
-**anything in square brackets** — `[CLINIC NAME]`, `[PRC NUMBER]`, `[AMOUNT]` — is a value you fill
-in once. The screens deliberately show the assistant leaving those blank rather than inventing a
-plausible one.
+**anything in square brackets** — `[LAS PIÑAS ADDRESS]`, `[PRC NUMBER]`, `[AMOUNT]` — is a value you
+fill in once. The screens deliberately show the assistant leaving those blank rather than inventing a
+plausible one. City is never signalled by colour alone: the dot on the rotation calendar sits beside
+a name that is always spelled out.
+
+The real details still to fill in are the two addresses, the phone and email, clinic hours, and
+Dr. Inciong's PRC and PTR numbers. Search the folder for `[` to find every one.
 
 It is a prototype, not a product: the data is invented, nothing persists, and the two forms send
 nowhere. `vercel.json` already points Vercel at `web/`, so it deploys at `/clinic` with no
