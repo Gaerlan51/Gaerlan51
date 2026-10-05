@@ -1,0 +1,22 @@
+# Two sites live here: the consulting practice at / and Dr. Inciong's Clinic
+# at /clinic. The pages worth finding are those two front doors.
+#
+# Everything disallowed below is either a sign-in screen or a staff-facing
+# prototype. None of it holds real patient data — the names and notes in it are
+# invented — but a fake chart turning up in a search for the clinic would be
+# worse than useless, so keep it out of the index. Each of those pages also
+# carries its own noindex tag; this file is the belt to that pair of braces.
+#
+# Prefix matching means /clinic/today also covers /clinic/today.html.
+
+User-agent: *
+Allow: /
+
+Disallow: /login
+Disallow: /clinic/login
+Disallow: /clinic/today
+Disallow: /clinic/bookings
+Disallow: /clinic/messages
+Disallow: /clinic/records
+Disallow: /clinic/certificate
+Disallow: /clinic/patient-sms
