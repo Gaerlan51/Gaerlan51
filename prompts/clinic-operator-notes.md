@@ -163,6 +163,27 @@ most bots. **Consent and privacy:** patients are typing health-adjacent details 
 so check that relay's data-handling terms and make sure the consent line on the form matches what
 you actually do with it.
 
+### The rotation looks after itself
+
+Nothing on the site carries a typed date for "this week". The public calendar, the heading above it,
+the hero card, and the dashboard's date line and week band all work themselves out from one anchor
+in `web/clinic/assets/clinic.js`:
+
+```js
+var ANCHOR = { y: 2026, m: 8, d: 7 };   // Mon 7 Sep 2026, a Las Piñas week
+```
+
+Months are zero-based in that object, so `m: 8` is September. Everything else is parity from there:
+an even number of weeks after the anchor is Las Piñas, an odd number is Cagayan de Oro, forwards and
+backwards. The calendar always shows the next six weeks starting with the current one.
+
+**It assumes the alternation never breaks.** Close for a holiday, or sit two weeks running in one
+city, and every week after that is wrong. The fix is one line: move the anchor to the first Monday
+of the new pattern. Do that the moment you know, not afterwards.
+
+The sample appointments on the dashboard are still fixed — they are invented, and the screen says
+so. Only the claims about *which week it is* compute themselves.
+
 ### 3. Can a patient book their own slot?
 
 **Not from this site, and not by accident.** The form puts a *request* in front of a person; the

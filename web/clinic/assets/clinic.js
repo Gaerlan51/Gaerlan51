@@ -11,6 +11,104 @@
 (function () {
   "use strict";
 
+  /* --- the rotation ------------------------------------------------------- */
+  /* The clinic alternates whole weeks between two cities, so every page that
+     claims to know what "this week" is has to work it out rather than carry a
+     date someone typed. One anchor drives all of it: a Monday known to be a
+     Las Pinas week. Parity from there gives every other week, forwards and
+     back, and the pages fill themselves from data attributes.
+
+     This assumes the alternation never breaks. Close for a holiday, or sit two
+     weeks in one city, and the parity is wrong from that point on — move the
+     anchor to the first Monday of the new pattern and it is right again. */
+  var ANCHOR = { y: 2026, m: 8, d: 7 };            // Mon 7 Sep 2026, Las Pinas
+  var CITIES = ["Las Pi\u00f1as", "Cagayan de Oro"];
+  var DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  var MONTHS = ["January", "February", "March", "April", "May", "June", "July",
+                "August", "September", "October", "November", "December"];
+  var SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  function mondayOf(date) {
+    var d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    return d;
+  }
+
+  function addWeeks(monday, n) {
+    var d = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate());
+    d.setDate(d.getDate() + n * 7);
+    return d;
+  }
+
+  /* Date-only UTC arithmetic, so a daylight-saving boundary can never shift a
+     week by one and flip every city on the page. */
+  function weekIndex(monday) {
+    var a = Date.UTC(ANCHOR.y, ANCHOR.m, ANCHOR.d);
+    var m = Date.UTC(monday.getFullYear(), monday.getMonth(), monday.getDate());
+    return Math.round((m - a) / 604800000);
+  }
+
+  function cityOf(monday) {
+    return CITIES[((weekIndex(monday) % 2) + 2) % 2];
+  }
+
+  function rangeOf(monday) {
+    var sat = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 5);
+    var tail = "Sat " + sat.getDate() + " " + SHORT[sat.getMonth()];
+    return monday.getMonth() === sat.getMonth()
+      ? "Mon " + monday.getDate() + " – " + tail
+      : "Mon " + monday.getDate() + " " + SHORT[monday.getMonth()] + " – " + tail;
+  }
+
+  function fill(selector, text) {
+    Array.prototype.forEach.call(document.querySelectorAll(selector), function (el) {
+      el.textContent = text;
+    });
+  }
+
+  (function rotation() {
+    var now = new Date();
+    var thisWeek = mondayOf(now);
+    var nextWeek = addWeeks(thisWeek, 1);
+
+    fill("[data-rota-city='now']", cityOf(thisWeek));
+    fill("[data-rota-when='now']", rangeOf(thisWeek));
+    fill("[data-rota-city='next']", cityOf(nextWeek));
+    fill("[data-rota-when='next']", rangeOf(nextWeek));
+    fill("[data-rota-heading]", "This week in " + cityOf(thisWeek));
+    fill("[data-rota-next-label]", "Next week · " + cityOf(nextWeek));
+    fill("[data-today-line]",
+      DAYS[now.getDay()] + ", " + now.getDate() + " " + MONTHS[now.getMonth()]
+      + " · " + cityOf(thisWeek) + " week · clinic opens 09:00");
+
+    // the marketing day card: the coming Thursday, in whichever city that is
+    var thursday = new Date(thisWeek.getFullYear(), thisWeek.getMonth(), thisWeek.getDate() + 3);
+    if (thursday < now) thursday = new Date(thursday.getFullYear(), thursday.getMonth(), thursday.getDate() + 7);
+    fill("[data-hero-day]", DAYS[thursday.getDay()] + ", " + thursday.getDate() + " " + MONTHS[thursday.getMonth()]);
+    fill("[data-hero-city]", cityOf(mondayOf(thursday)) + " · 2 left");
+
+    var list = document.querySelector("[data-weeks]");
+    if (list) {
+      list.textContent = "";
+      for (var i = 0; i < 6; i++) {
+        var monday = addWeeks(thisWeek, i);
+        var city = cityOf(monday);
+        var card = document.createElement("div");
+        card.className = "week" + (i === 0 ? " week--now" : "")
+          + (city === CITIES[1] ? " week--cdo" : "");
+        var when = document.createElement("div");
+        when.className = "week__k";
+        when.textContent = rangeOf(monday);
+        var where = document.createElement("div");
+        where.className = "week__c";
+        where.textContent = city;
+        card.appendChild(when);
+        card.appendChild(where);
+        list.appendChild(card);
+      }
+    }
+  })();
+
   /* --- password reveal ---------------------------------------------------- */
   var pw = document.querySelector("[data-pw-toggle]");
   if (pw) {

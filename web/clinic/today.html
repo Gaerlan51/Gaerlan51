@@ -36,7 +36,7 @@
     <div class="view__head">
       <div>
         <h1>Today</h1>
-        <p class="view__sub">Tuesday, 22 September · Las Piñas week · clinic opens 09:00</p>
+        <p class="view__sub" data-today-line>Tuesday, 22 September · Las Piñas week · clinic opens 09:00</p>
       </div>
       <div class="view__tools">
         <span class="tag tag--proto">Prototype · sample data</span>
@@ -46,13 +46,13 @@
     <div class="rota">
       <div class="rota__now">
         <span class="rota__k">This week</span>
-        <span class="rota__city">Las Piñas</span>
-        <span class="rota__when">Mon 21 – Sat 26 Sep</span>
+        <span class="rota__city" data-rota-city="now">Las Piñas</span>
+        <span class="rota__when" data-rota-when="now">Mon 21 – Sat 26 Sep</span>
       </div>
       <div class="rota__next">
         <span class="rota__k">Next week</span>
-        <span class="rota__city">Cagayan de Oro</span>
-        <span class="rota__when">Mon 28 Sep – Sat 3 Oct</span>
+        <span class="rota__city" data-rota-city="next">Cagayan de Oro</span>
+        <span class="rota__when" data-rota-when="next">Mon 28 Sep – Sat 3 Oct</span>
       </div>
       <p class="rota__note">The clinic alternates weekly. No Las Piñas slot exists next week, and no Cagayan de Oro slot exists this one.</p>
     </div>
@@ -74,7 +74,7 @@
       <section class="panel">
         <div class="panel__head">
           <h2>Schedule</h2>
-          <span class="panel__hint">Las Piñas · 10-minute buffer between sessions</span>
+          <span class="panel__hint"><span data-rota-city="now">Las Piñas</span> · 10-minute buffer between sessions</span>
         </div>
 
         <div>
@@ -103,8 +103,8 @@
         <div>
           <div class="pract">
             <span class="av av--alt" aria-hidden="true">CDO</span>
-            <span class="n">Next week · Cagayan de Oro</span>
-            <span class="r">Mon 28 Sep – Sat 3 Oct</span>
+            <span class="n" data-rota-next-label>Next week · Cagayan de Oro</span>
+            <span class="r" data-rota-when="next">Mon 28 Sep – Sat 3 Oct</span>
             <span class="c">6 of 24 booked</span>
           </div>
           <div class="meter"><span style="width: 25%;"></span></div>
@@ -144,8 +144,8 @@
               <span class="ico" style="color: var(--warn-ink);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 13l19-7-7 19-3-8-9-4z"/></svg></span>
               <div>
                 <h3>Follow-up lands on the wrong city</h3>
-                <p>J. Torres is due a review in two weeks. That week is Cagayan de Oro; the next Las Piñas week is 5 Oct.</p>
-                <a href="./messages.html">Offer 5 Oct instead</a>
+                <p>J. Torres is due a review in three weeks. An odd gap always lands in the other city, so the nearest Las Piñas week is four weeks on.</p>
+                <a href="./messages.html">Offer four weeks instead</a>
               </div>
             </div>
             <div class="attn">
